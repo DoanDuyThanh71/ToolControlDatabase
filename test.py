@@ -11,5 +11,9 @@ cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 
 cursor.execute("SHOW TABLES")
 tables = cursor.fetchall()
+count = 0
 for table in tables:
-    print(table)
+    print(table[0])
+    count += 1
+
+print(f"Number of tables: {count}")

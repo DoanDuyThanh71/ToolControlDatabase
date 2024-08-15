@@ -10,64 +10,71 @@ cursor.execute("use DBCPN")
 cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
 
 
-# cursor.execute("DROP TABLE IF EXISTS Campaigns")
-
-# Tạo bảng Customers với các cột mới
+# Tạo bảng Products
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS Customers (
-    CustomerId INT PRIMARY KEY,
-    Campaign INT NOT NULL,
-    FOREIGN KEY (CustomerId) REFERENCES Leads(LeadId)
+CREATE TABLE IF NOT EXISTS Products (
+    ProductId INT UNSIGNED PRIMARY KEY,
+    ProductName VARCHAR(255) NOT NULL,
+    Description TEXT NOT NULL,
+    UnitPrice DECIMAL(12,1) NOT NULL,
+    Remaining INT UNSIGNED NOT NULL
 )
 ''')
+
 
 # Tạo bảng Orders
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Orders (
-    OrderId INT PRIMARY KEY,
-    CustomerId INT NOT NULL,
+    OrderId INT UNSIGNED PRIMARY KEY,
+    CustomerId INT UNSIGNED NOT NULL,
     OrderDate DATE NOT NULL,
-    TotalAmount DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId)
-)
-''')
-
-# Tạo bảng Products
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS Products (
-    ProductId INT PRIMARY KEY,
-    ProductName VARCHAR(255) NOT NULL,
-    UnitPrice DECIMAL(10, 2) NOT NULL,
-    remaining INT NOT NULL
-)
-''')
-
-
-
-# Tạo bảng OrderDetails
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS OrderDetails (
-    OrderDetailId INT PRIMARY KEY,
-    CustomerId INT NOT NULL,
-    OrderId INT NOT NULL,
-    ProductId INT NOT NULL,
-    Quantity INT NOT NULL,
-    FOREIGN KEY (OrderId) REFERENCES Orders(OrderId),
-    FOREIGN KEY (ProductId) REFERENCES Products(ProductId),
-    Foreign KEY (CustomerId) REFERENCES Customers(CustomerId)
+    ProductID INT UNSIGNED NOT NULL,
+    TotalAmount DECIMAL(12,1) NOT NULL,
+    FOREIGN KEY (CustomerId) REFERENCES Leads(LeadId)
 )
 ''')
 
 # Tạo bảng Payments
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Payments (
-    PaymentId INT PRIMARY KEY,
-    OrderId INT NOT NULL,
+    PaymentId INT UNSIGNED PRIMARY KEY,
+    OrderId INT UNSIGNED NOT NULL,
     PaymentDate DATE NOT NULL,
-    Amount DECIMAL(10, 2) NOT NULL,
+    Amount DECIMAL(12,1) NOT NULL,
     FOREIGN KEY (OrderId) REFERENCES Orders(OrderId)
 )
 ''')
+
+# Tạo bảng EmployeePerformance
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS EmployeePerformanceSales (
+    EmployeePerformanceSalesID INT UNSIGNED PRIMARY KEY,
+    Employee INT UNSIGNED NOT NULL,
+    Date DATE NOT NULL,
+    WorkPerformanceScore INT UNSIGNED NOT NULL,
+    ConsciousnessScore INT UNSIGNED NOT NULL,
+    CustomerCount INT UNSIGNED NOT NULL,
+    TotalRevenue DECIMAL(12,1) NOT NULL,
+    DealClosureRate INT UNSIGNED NOT NULL,
+    Foreign KEY (Employee) REFERENCES Employee(EmployeeId)
+)
+''')
+
+# Tạo bảng KPI
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS KPISales (
+    KPIId INT UNSIGNED PRIMARY KEY,
+    Employee INT UNSIGNED NOT NULL,
+    Date DATE NOT NULL,
+    WorkPerformanceScore INT UNSIGNED NOT NULL,
+    ConsciousnessScore INT UNSIGNED NOT NULL,
+    CustomerCount INT UNSIGNED NOT NULL,
+    TotalRevenue DECIMAL(12,1) NOT NULL,
+    DealClosureRate INT UNSIGNED NOT NULL,
+    FOREIGN KEY (Employee) REFERENCES Employee(EmployeeId)
+)
+''')
+
 
 
 
