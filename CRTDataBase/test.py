@@ -17,7 +17,7 @@ cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 # for table in tables:
 #     print(table[0])
     
-cursor.execute("SELECT * FROM Department")
+cursor.execute("SELECT * FROM KPIHR")
 employees = cursor.fetchall()
 for employee in employees:
     print(employee)

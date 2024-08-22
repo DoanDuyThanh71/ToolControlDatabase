@@ -27,7 +27,6 @@ class UI_Add(object):
         self.path = None
         self.Department = None
         self.Table = None
-        
         self.department_data = {
             "HR": ["Application", "Department", "Employee", "EmployeeError", "ErrorCode", "InterView", "JobPosition", "KPIHR", "PerformanceEvaluation", "RecruitmentChannel"], 
             "MKT": ["Campaign", "KPIMKT", "Leads", "PageView", "PerformanceEvaluationMKT"],
@@ -69,11 +68,27 @@ class UI_Add(object):
             else:
                 self.labInfor.setText("No file selected.")
             self.tabAns.resizeColumnsToContents()
+            
     def run_app(self):
         if not self.path:
             error_dialog = ErrorDialog("")
             error_dialog.show_error("No file selected. Please import a xlsx file.")
             return
+        
+        # Check if data contains null values
+        if any(None in row for row in self.data):
+            error_dialog = ErrorDialog("")
+            error_dialog.show_error("Data contains null values. Please ensure all cells are filled.")
+            return
+        
+        
+        # Check for duplicates in the first column
+        first_column_values = [row[0] for row in self.data[1:]]
+        if len(first_column_values) != len(set(first_column_values)):
+            error_dialog = ErrorDialog("")
+            error_dialog.show_error("Duplicate values found in the first column. Please ensure all values are unique.")
+            return
+        
 
                 
         self.worker = Worker(self.path, self.Department.currentText(), self.Table.currentText())
