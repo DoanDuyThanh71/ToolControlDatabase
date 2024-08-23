@@ -150,29 +150,5 @@ cursor.execute("""
 """)
 
 
-
-
-
-
-# Insert data into Department table
-cursor.execute("""
-    INSERT INTO Department (DepartmentName)
-    VALUES ('Sales'),
-           ('Marketing'),
-           ('Finance')
-""")
-
-
-# Insert data into Employee table
-cursor.execute("""
-    INSERT INTO Employee (FullName, DateOfBirth, Gender, Address, PhoneNumber, Email, DepartmentId, HireDate, Salary, EmploymentStatus)
-    VALUES ('John Doe', '1990-01-01', 'Male', '123 Main St', '1234567890', 'john.doe@example.com', 1, '2022-01-01', 5000.0, 'Employed'),
-           ('Jane Smith', '1995-02-15', 'Female', '456 Elm St', '9876543210', 'jane.smith@example.com', 2, '2022-02-01', 6000.0, 'Employed')
-""")
-
-
 db.commit()
-
-
-
 db.close()

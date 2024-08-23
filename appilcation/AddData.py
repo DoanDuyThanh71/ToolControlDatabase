@@ -1,40 +1,8 @@
 import pandas as pd
 import pandas as pd
-
 import mysql.connector
 
-db = mysql.connector.connect(
-    host='localhost', user='root', password='Thanhdua12@'
-)
-cursor = db.cursor()
-cursor.execute("use DBCPN")
-cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-
-# cursor.execute("SHOW TABLES")
-# tables = cursor.fetchall()
-# table_count = len(tables)
-# print("Number of tables:", table_count)
-
-
-# for table in tables:
-#     print(table[0])
-
-# cursor.execute("DESCRIBE Department")
-# columns = cursor.fetchall()
-# for column in columns:
-#     print(column[0])
-# Delete a value from the table
-
-
-# cursor.execute("""
-#         DELETE FROM employee
-#         WHERE DepartmentId IN (SELECT DepartmentId FROM department)
-#     """)
-
-# cursor.execute("DELETE FROM Department")
-# db.commit()
-
-
+# HR 
 def add_to_Department(file_path):
     db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
     cursor = db.cursor()
@@ -165,8 +133,7 @@ def add_to_Employee(file_path):
     db.commit()
     db.close()
     
-    
-                
+                   
 def add_to_EmployeeError(file_path):
  # Kết nối tới cơ sở dữ liệu
     db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
@@ -338,8 +305,7 @@ def add_to_KPIHR(file_path):
     db.commit()  # Lưu thay đổi vào cơ sở dữ liệu
     db.close()
     
-    
-                
+                  
 def add_to_PerformanceEvaluationHR(file_path):
     # Kết nối tới cơ sở dữ liệu
     db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
@@ -381,7 +347,8 @@ def add_to_PerformanceEvaluationHR(file_path):
     db.commit()
     db.close()
 
-                
+
+# MKT                 
 def add_to_RecruitmentChannel(file_path):
     db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
     cursor = db.cursor()
@@ -416,51 +383,909 @@ def add_to_RecruitmentChannel(file_path):
 
 
 def add_to_KPIMKT(file_path):
-                1
+    # Kết nối tới cơ sở dữ liệu
+    db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
+    cursor = db.cursor()
+    cursor.execute("USE DBCPN")  # Chọn cơ sở dữ liệu cần sử dụng
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Lặp qua từng hàng trong dữ liệu và chèn vào bảng KPIMKT
+    for index, row in data.iterrows():
+        kpi_mkt_id = row["KPIMKTId"]
+        employee_id = row["EmployeeId"]
+        date = row["Date"]
+        work_performance_score = row["WorkPerformanceScore"]
+        consciousness_score = row["ConsciousnessScore"]
+        lead_count = row["LeadCount"]
+        page_views = row["PageViews"]
+        bounce_rate = row["BounceRate"]
+        avg_time_on_page = row["AvgTimeOnPage"]
+        likes = row["Likes"]
+        comments = row["Comments"]
+        shares = row["Shares"]
+        keyword_ranking = row["KeywordRanking"]
+        web_traffic = row["WebTraffic"]
+        organic_keyword_count = row["OrganicKeywordCount"]
+        conversion_count = row["ConversionCount"]
+        exit_rate = row["ExitRate"]
+        link_count = row["LinkCount"]
+
+        cursor.execute(
+            """
+            INSERT INTO KPIMKT 
+            (KPIMKTId, EmployeeId, Date, WorkPerformanceScore, ConsciousnessScore, LeadCount, PageViews, BounceRate, AvgTimeOnPage, Likes, Comments, Shares, KeywordRanking, WebTraffic, OrganicKeywordCount, ConversionCount, ExitRate, LinkCount)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                EmployeeId = VALUES(EmployeeId),
+                Date = VALUES(Date),
+                WorkPerformanceScore = VALUES(WorkPerformanceScore),
+                ConsciousnessScore = VALUES(ConsciousnessScore),
+                LeadCount = VALUES(LeadCount),
+                PageViews = VALUES(PageViews),
+                BounceRate = VALUES(BounceRate),
+                AvgTimeOnPage = VALUES(AvgTimeOnPage),
+                Likes = VALUES(Likes),
+                Comments = VALUES(Comments),
+                Shares = VALUES(Shares),
+                KeywordRanking = VALUES(KeywordRanking),
+                WebTraffic = VALUES(WebTraffic),
+                OrganicKeywordCount = VALUES(OrganicKeywordCount),
+                ConversionCount = VALUES(ConversionCount),
+                ExitRate = VALUES(ExitRate),
+                LinkCount = VALUES(LinkCount)
+            """,
+            (kpi_mkt_id, employee_id, date, work_performance_score, consciousness_score, lead_count, page_views, bounce_rate, avg_time_on_page, likes, comments, shares, keyword_ranking, web_traffic, organic_keyword_count, conversion_count, exit_rate, link_count)
+        )
+    
+    db.commit()  # Lưu thay đổi vào cơ sở dữ liệu
+    db.close()
+    
+    
 def add_to_Leads(file_path):
-                1
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@"
+    )
+    cursor = db.cursor()
+    cursor.execute("USE DBCPN")  # Chọn cơ sở dữ liệu cần sử dụng
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Duyệt qua từng hàng trong file Excel và chèn vào bảng Lead
+    for index, row in data.iterrows():
+        lead_id = row["LeadId"]
+        name = row["Name"]
+        address = row["Address"]
+        phone = row["Phone"]
+        email = row["Email"]
+        age = row["Age"]
+        gender = row["Gender"]
+        date = row["Date"]
+        campaign_id = row["CampaignId"]
+        status = row["Status"]
+        score = row["Score"]
+        
+        cursor.execute("""
+            INSERT INTO Leads (LeadId, Name, Address, Phone, Email, Age, Gender, Date, CampaignId, Status, Score)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                Name = VALUES(Name),
+                Address = VALUES(Address),
+                Phone = VALUES(Phone),
+                Email = VALUES(Email),
+                Age = VALUES(Age),
+                Gender = VALUES(Gender),
+                Date = VALUES(Date),
+                CampaignId = VALUES(CampaignId),
+                Status = VALUES(Status),
+                Score = VALUES(Score)
+        """, (lead_id, name, address, phone, email, age, gender, date, campaign_id, status, score))
+    
+    # Xác nhận thay đổi và đóng kết nối
+    db.commit()
+    db.close()
+
+                          
 def add_to_PageView(file_path):
-                1
+    # Kết nối tới cơ sở dữ liệu
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@"
+    )
+    cursor = db.cursor()
+    cursor.execute("USE DBCPN")  # Chọn cơ sở dữ liệu cần sử dụng
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Duyệt qua từng hàng trong file Excel và chèn vào bảng PageView
+    for index, row in data.iterrows():
+        pageview_id = row["PageViewId"]
+        date = row["Date"]
+        page = row["Page"]
+        page_views = row["PageViews"]
+        bounce_rate = row["BounceRate"]
+        avg_time_on_page = row["AvgTimeOnPage"]
+        likes = row["Likes"]
+        comments = row["Comments"]
+        shares = row["Shares"]
+        
+        cursor.execute("""
+            INSERT INTO PageViews (PageViewId, Date, Page, PageViews, BounceRate, AvgTimeOnPage, Likes, Comments, Shares)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                Date = VALUES(Date),
+                Page = VALUES(Page),
+                PageViews = VALUES(PageViews),
+                BounceRate = VALUES(BounceRate),
+                AvgTimeOnPage = VALUES(AvgTimeOnPage),
+                Likes = VALUES(Likes),
+                Comments = VALUES(Comments),
+                Shares = VALUES(Shares)
+        """, (pageview_id, date, page, page_views, bounce_rate, avg_time_on_page, likes, comments, shares))
+    
+    # Xác nhận thay đổi và đóng kết nối
+    db.commit()
+    db.close()
+
+                          
 def add_to_PerformanceEvaluationMKT(file_path):
-                1
+        # Kết nối tới cơ sở dữ liệu
+    db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
+    cursor = db.cursor()
+    cursor.execute("USE DBCPN")  # Chọn cơ sở dữ liệu cần sử dụng
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    for index, row in data.iterrows():
+        cursor.execute("""
+            INSERT INTO PerformanceEvaluationMKT (EvaluationMKTId, EmployeeId, Date, WorkPerformanceScore, ConsciousnessScore, LeadCount, PageViews, BounceRate, AvgTimeOnPage, Likes, Comments, Shares, KeywordRanking, WebTraffic, OrganicKeywordCount, ConversionCount, ExitRate, LinkCount)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE 
+                EmployeeId = VALUES(EmployeeId),
+                Date = VALUES(Date),
+                WorkPerformanceScore = VALUES(WorkPerformanceScore),
+                ConsciousnessScore = VALUES(ConsciousnessScore),
+                LeadCount = VALUES(LeadCount),
+                PageViews = VALUES(PageViews),
+                BounceRate = VALUES(BounceRate),
+                AvgTimeOnPage = VALUES(AvgTimeOnPage),
+                Likes = VALUES(Likes),
+                Comments = VALUES(Comments),
+                Shares = VALUES(Shares),
+                KeywordRanking = VALUES(KeywordRanking),
+                WebTraffic = VALUES(WebTraffic),
+                OrganicKeywordCount = VALUES(OrganicKeywordCount),
+                ConversionCount = VALUES(ConversionCount),
+                ExitRate = VALUES(ExitRate),
+                LinkCount = VALUES(LinkCount)
+        """, (
+            row["EvaluationMKTId"],
+            row["EmployeeId"],
+            row["Date"],
+            row["WorkPerformanceScore"],
+            row["ConsciousnessScore"],
+            row["LeadCount"],
+            row["PageViews"],
+            row["BounceRate"],
+            row["AvgTimeOnPage"],
+            row["Likes"],
+            row["Comments"],
+            row["Shares"],
+            row["KeywordRanking"],
+            row["WebTraffic"],
+            row["OrganicKeywordCount"],
+            row["ConversionCount"],
+            row["ExitRate"],
+            row["LinkCount"]
+        ))
+    
+    db.commit()
+    db.close()
+    
+    
+def add_to_SEO(file_path):
+        # Kết nối tới cơ sở dữ liệu
+    db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
+    cursor = db.cursor()
+    cursor.execute("USE DBCPN")  # Chọn cơ sở dữ liệu cần sử dụng
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    for index, row in data.iterrows():
+        cursor.execute("""
+            INSERT INTO SEO (SEOId, Creator, Platform, KeywordRanking, WebTraffic, OrganicKeywordCount, ConversionCount, ExitRate, LinkCount)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE 
+                Creator = VALUES(Creator),
+                Platform = VALUES(Platform),
+                KeywordRanking = VALUES(KeywordRanking),
+                WebTraffic = VALUES(WebTraffic),
+                OrganicKeywordCount = VALUES(OrganicKeywordCount),
+                ConversionCount = VALUES(ConversionCount),
+                ExitRate = VALUES(ExitRate),
+                LinkCount = VALUES(LinkCount)
+        """, (
+            row["SEOId"],
+            row["Creator"],
+            row["Platform"],
+            row["KeywordRanking"],
+            row["WebTraffic"],
+            row["OrganicKeywordCount"],
+            row["ConversionCount"],
+            row["ExitRate"],
+            row["LinkCount"]
+        ))
+    
+    db.commit()
+    db.close()
+    
+
+# SALES 
+def add_to_Products(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Products (
+        ProductId, ProductName, Description, UnitPrice, Remaining
+    ) VALUES (%s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        ProductName = VALUES(ProductName),
+        Description = VALUES(Description),
+        UnitPrice = VALUES(UnitPrice),
+        Remaining = VALUES(Remaining)
+    """
+
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['ProductId'], row['ProductName'], row['Description'], 
+            row['UnitPrice'], row['Remaining']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+                
+                
+def add_to_Order(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Orders (
+        OrderId, CustomerId, OrderDate, ProductId, TotalAmount
+    ) VALUES (%s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        CustomerId = VALUES(CustomerId),
+        OrderDate = VALUES(OrderDate),
+        ProductId = VALUES(ProductId),
+        TotalAmount = VALUES(TotalAmount)
+    """
+
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['OrderId'], row['CustomerId'], row['OrderDate'],
+            row['ProductId'], row['TotalAmount']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+                
+                
+def add_to_Payments(file_path):
+    db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Thanhdua12@",
+    database="DBCPN"
+)
+    cursor = db.cursor()
+    data = pd.read_excel(file_path)
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Payments (
+        PaymentId, OrderId, PaymentDate, Amount
+    ) VALUES (%s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        OrderId = VALUES(OrderId),
+        PaymentDate = VALUES(PaymentDate),
+        Amount = VALUES(Amount)
+    """
+
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['PaymentId'], row['OrderId'], row['PaymentDate'], 
+            row['Amount']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
 
 def add_to_KPISales(file_path):
-                1
-def add_to_Order(file_path):
-                1
-def add_to_Products(file_path):
-                1
+# Kết nối tới cơ sở dữ liệu
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    data = pd.read_excel(file_path)
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO KPISales (
+        KPIId, Employee, Date, WorkPerformanceScore, ConsciousnessScore, 
+        CustomerCount, TotalRevenue, DealClosureRate
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Employee = VALUES(Employee),
+        Date = VALUES(Date),
+        WorkPerformanceScore = VALUES(WorkPerformanceScore),
+        ConsciousnessScore = VALUES(ConsciousnessScore),
+        CustomerCount = VALUES(CustomerCount),
+        TotalRevenue = VALUES(TotalRevenue),
+        DealClosureRate = VALUES(DealClosureRate)
+    """
 
-def add_to_ExpenseReports(file_path):
-                1
-def add_to_Fund(file_path):
-                1
-def add_to_KPIAccounting(file_path):
-                1
-def add_to_Payables(file_path):
-                1
-def add_to_PerformanceEvaluationAccounting(file_path):
-                1
-def add_to_PersonalIncomeTax(file_path):
-                1
-def add_to_Reason(file_path):
-                1
-def add_to_Receivables(file_path):
-                1
-def add_to_Tax(file_path):
-                1
-def add_to_Taxes(file_path):
-                1
-def add_to_TaxTypeDescription(file_path):
-                1
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['KPIId'], row['Employee'], row['Date'], 
+            row['WorkPerformanceScore'], row['ConsciousnessScore'], 
+            row['CustomerCount'], row['TotalRevenue'], 
+            row['DealClosureRate']
+        ))
 
-def add_to_Campaign(file_path):
-    1
-def add_to_Assets(file_path):
-    2
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+
 
 def add_to_PerformanceEvaluationSales(file_path):
-    1
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO EmployeePerformanceSales (
+        EmployeePerformanceSalesID, Employee, Date, WorkPerformanceScore, ConsciousnessScore, CustomerCount, TotalRevenue, DealClosureRate
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Employee = VALUES(Employee),
+        Date = VALUES(Date),
+        WorkPerformanceScore = VALUES(WorkPerformanceScore),
+        ConsciousnessScore = VALUES(ConsciousnessScore),
+        CustomerCount = VALUES(CustomerCount),
+        TotalRevenue = VALUES(TotalRevenue),
+        DealClosureRate = VALUES(DealClosureRate)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['EmployeePerformanceSalesID'], row['Employee'], row['Date'], 
+            row['WorkPerformanceScore'], row['ConsciousnessScore'], row['CustomerCount'], 
+            row['TotalRevenue'], row['DealClosureRate']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+     
+# Accounting    
+def add_to_ExpenseReports(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO ExpenseReports (
+        ReportId, ReportDate, TotalAmount, EmployeeID, ReasonId, Status, AcceptDate
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        ReportDate = VALUES(ReportDate),
+        TotalAmount = VALUES(TotalAmount),
+        EmployeeID = VALUES(EmployeeID),
+        ReasonId = VALUES(ReasonId),
+        Status = VALUES(Status),
+        AcceptDate = VALUES(AcceptDate)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['ReportId'], row['ReportDate'], row['TotalAmount'], 
+            row['EmployeeID'], row['ReasonId'], row['Status'], 
+            row['AcceptDate']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_Fund(file_path):
+    # Kết nối tới cơ sở dữ liệu
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Fund (
+        FundId, Date, OperatingFund, ReserveFund, DevelopmentFund
+    ) VALUES (%s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Date = VALUES(Date),
+        OperatingFund = VALUES(OperatingFund),
+        ReserveFund = VALUES(ReserveFund),
+        DevelopmentFund = VALUES(DevelopmentFund)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['FundId'], row['Date'], row['OperatingFund'], 
+            row['ReserveFund'], row['DevelopmentFund']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_KPIAccounting(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO PerformanceEvaluationAccounting (
+        EmployeeId, Month, WorkPerformanceScore, ConsciousnessScore, AveragePaymentTime,
+        AverageDebtRecoveryTime, CostPerTransaction, AverageProcessingTime, PaymentErrorRate,
+        CostToRevenueRatio
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Month = VALUES(Month),
+        WorkPerformanceScore = VALUES(WorkPerformanceScore),
+        ConsciousnessScore = VALUES(ConsciousnessScore),
+        AveragePaymentTime = VALUES(AveragePaymentTime),
+        AverageDebtRecoveryTime = VALUES(AverageDebtRecoveryTime),
+        CostPerTransaction = VALUES(CostPerTransaction),
+        AverageProcessingTime = VALUES(AverageProcessingTime),
+        PaymentErrorRate = VALUES(PaymentErrorRate),
+        CostToRevenueRatio = VALUES(CostToRevenueRatio)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['EmployeeId'], row['Month'], row['WorkPerformanceScore'], 
+            row['ConsciousnessScore'], row['AveragePaymentTime'], 
+            row['AverageDebtRecoveryTime'], row['CostPerTransaction'], 
+            row['AverageProcessingTime'], row['PaymentErrorRate'], 
+            row['CostToRevenueRatio']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+                
+def add_to_Payables(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Payables (
+        PayablesId, Date, CustomerId, Amount, DueDate
+    ) VALUES (%s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Date = VALUES(Date),
+        CustomerId = VALUES(CustomerId),
+        Amount = VALUES(Amount),
+        DueDate = VALUES(DueDate)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['PayablesId'], row['Date'], row['CustomerId'], 
+            row['Amount'], row['DueDate']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_PerformanceEvaluationAccounting(file_path):
+    # Kết nối tới cơ sở dữ liệu
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO PerformanceEvaluationAccounting (
+        EmployeeId, Month, WorkPerformanceScore, ConsciousnessScore, 
+        AveragePaymentTime, AverageDebtRecoveryTime, CostPerTransaction, 
+        AverageProcessingTime, PaymentErrorRate, CostToRevenueRatio
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        EmployeeId = VALUES(EmployeeId),
+        Month = VALUES(Month),
+        WorkPerformanceScore = VALUES(WorkPerformanceScore),
+        ConsciousnessScore = VALUES(ConsciousnessScore),
+        AveragePaymentTime = VALUES(AveragePaymentTime),
+        AverageDebtRecoveryTime = VALUES(AverageDebtRecoveryTime),
+        CostPerTransaction = VALUES(CostPerTransaction),
+        AverageProcessingTime = VALUES(AverageProcessingTime),
+        PaymentErrorRate = VALUES(PaymentErrorRate),
+        CostToRevenueRatio = VALUES(CostToRevenueRatio)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['EmployeeId'], row['Month'], row['WorkPerformanceScore'], 
+            row['ConsciousnessScore'], row['AveragePaymentTime'], 
+            row['AverageDebtRecoveryTime'], row['CostPerTransaction'],
+            row['AverageProcessingTime'], row['PaymentErrorRate'],
+            row['CostToRevenueRatio']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_PersonalIncomeTax(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO PersonalIncomeTax (
+        PersonalIncomeTaxId, TaxType
+    ) VALUES (%s, %s)
+    ON DUPLICATE KEY UPDATE
+        TaxType = VALUES(TaxType)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            int(row['PersonalIncomeTaxId']), int(row['TaxType'])
+        ))
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_Reason(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Reason (
+        ReasonId, Description
+    ) VALUES (%s, %s)
+    ON DUPLICATE KEY UPDATE
+        Description = VALUES(Description)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['ReasonId'], row['Description']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_Receivables(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Receivables (
+        ReceivablesId, Date, CustomerId, Amount, DueDate
+    ) VALUES (%s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Date = VALUES(Date),
+        CustomerId = VALUES(CustomerId),
+        Amount = VALUES(Amount),
+        DueDate = VALUES(DueDate)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['ReceivablesId'], row['Date'], row['CustomerId'],
+            row['Amount'], row['DueDate']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_Taxes(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Taxes (
+        TaxId, Date, BusinessTax, IncomeTax, ValueAddedTax, PersonalIncomeTax
+    ) VALUES (%s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Date = VALUES(Date),
+        BusinessTax = VALUES(BusinessTax),
+        IncomeTax = VALUES(IncomeTax),
+        ValueAddedTax = VALUES(ValueAddedTax),
+        PersonalIncomeTax = VALUES(PersonalIncomeTax)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['TaxId'], row['Date'], row['BusinessTax'], row['IncomeTax'], 
+            row['ValueAddedTax'], row['PersonalIncomeTax']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    
+def add_to_TaxTypeDescription(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO TaxTypeDescription (
+        TaxTypeID, Description, FixedTax, RateFixedTax
+    ) VALUES (%s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Description = VALUES(Description),
+        FixedTax = VALUES(FixedTax),
+        RateFixedTax = VALUES(RateFixedTax)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['TaxTypeID'], row['Description'], row['FixedTax'], row['RateFixedTax']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
+
+
+def add_to_Campaign(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Campaigns (
+        CampaignId, Marketer, Name, Brand, Target, StartDate, EndDate, 
+        Description, Impression, Reach, Click, Share, Cmt, Inbox, Budget
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        Marketer = VALUES(Marketer),
+        Name = VALUES(Name),
+        Brand = VALUES(Brand),
+        Target = VALUES(Target),
+        StartDate = VALUES(StartDate),
+        EndDate = VALUES(EndDate),
+        Description = VALUES(Description),
+        Impression = VALUES(Impression),
+        Reach = VALUES(Reach),
+        Click = VALUES(Click),
+        Share = VALUES(Share),
+        Cmt = VALUES(Cmt),
+        Inbox = VALUES(Inbox),
+        Budget = VALUES(Budget)
+    """
+
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['CampaignId'], row['Marketer'], row['Name'], row['Brand'], 
+            row['Target'], row['StartDate'], row['EndDate'], row['Description'], 
+            row['Impression'], row['Reach'], row['Click'], row['Share'], 
+            row['Cmt'], row['Inbox'], row['Budget']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    db.close()
+    
+    
+def add_to_Assets(file_path):
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Thanhdua12@",
+        database="DBCPN"
+    )
+    cursor = db.cursor()
+    
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+    
+    # Chuẩn bị câu lệnh SQL để chèn dữ liệu
+    sql = """
+    INSERT INTO Assets (
+        AssetId, ProductName, Quantity, UnitPrice
+    ) VALUES (%s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        ProductName = VALUES(ProductName),
+        Quantity = VALUES(Quantity),
+        UnitPrice = VALUES(UnitPrice)
+    """
+    
+    # Chèn dữ liệu vào cơ sở dữ liệu
+    for index, row in data.iterrows():
+        cursor.execute(sql, (
+            row['AssetId'], row['ProductName'], row['Quantity'], row['UnitPrice']
+        ))
+
+    # Commit transaction và đóng kết nối
+    db.commit()
+    cursor.close()
+    db.close()
 
 
 def insert_data_from_excel(file_path, department, table):
@@ -491,6 +1316,8 @@ def insert_data_from_excel(file_path, department, table):
             add_to_Campaign(file_path)
         if table == 'KPIMKT':
             add_to_KPIMKT(file_path)
+        if table == 'SEO':
+            add_to_SEO(file_path)
         if table == 'Leads':
             add_to_Leads(file_path)
         if table == 'PageView':
@@ -507,6 +1334,8 @@ def insert_data_from_excel(file_path, department, table):
             add_to_Order(file_path)
         if table == 'Products':
             add_to_Products(file_path)
+        if table == 'Payments':
+            add_to_Payments(file_path)
     
     elif department == 'Accounting':
         if table == 'Assets':
@@ -527,8 +1356,6 @@ def insert_data_from_excel(file_path, department, table):
             add_to_Reason(file_path)
         if table == 'Receivables':
             add_to_Receivables(file_path)
-        if table == 'Tax':
-            add_to_Tax(file_path)
         if table == 'Taxes':
             add_to_Taxes(file_path)
         if table == 'TaxTypeDescription':

@@ -77,7 +77,5 @@ CREATE TABLE IF NOT EXISTS KPISales (
 
 
 
-
-
 db.commit()
 db.close()

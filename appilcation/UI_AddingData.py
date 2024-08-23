@@ -29,9 +29,9 @@ class UI_Add(object):
         self.Table = None
         self.department_data = {
             "HR": ["Application", "Department", "Employee", "EmployeeError", "ErrorCode", "InterView", "JobPosition", "KPIHR", "PerformanceEvaluation", "RecruitmentChannel"], 
-            "MKT": ["Campaign", "KPIMKT", "Leads", "PageView", "PerformanceEvaluationMKT"],
-            "SALES": ["PerformanceEvaluationSales", "KPISales", "Order", "Products"],
-            "Accounting": ["Assets", "ExpenseReports", "Fund", "KPIAccounting", "Payables", "PerformanceEvaluationAccounting", "PersonalIncomeTax", "Reason", "Receivables", "Tax", "Taxes", "TaxTypeDescription"]
+            "MKT": ["Campaign", "SEO", "KPIMKT", "Leads", "PageView", "PerformanceEvaluationMKT"],
+            "SALES": ["PerformanceEvaluationSales", "KPISales", "Order", "Products", "Payments"],
+            "Accounting": ["Assets", "ExpenseReports", "Fund", "KPIAccounting", "Payables", "PerformanceEvaluationAccounting", "PersonalIncomeTax", "Reason", "Receivables", "Taxes", "TaxTypeDescription"]
         }
 
     def importData(self):
