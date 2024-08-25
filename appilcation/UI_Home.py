@@ -63,29 +63,29 @@ class UI_Home(object):
         self.addData.clicked.connect(self.openReducedData)
         self.addData.installEventFilter(self.addData)
 
-        self.btnReinforcement = QtWidgets.QPushButton(self.centralwidget)
-        self.btnReinforcement.setGeometry(QtCore.QRect(90, 230, 630, 41))
+        self.updateData = QtWidgets.QPushButton(self.centralwidget)
+        self.updateData.setGeometry(QtCore.QRect(90, 230, 630, 41))
         font = QtGui.QFont()
         font.setFamily("Tahoma")
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
-        self.btnReinforcement.setFont(font)
-        self.btnReinforcement.setObjectName("btnReinforcement")
-        # self.btnReinforcement.clicked.connect(self.openReinforcement)
-        self.btnReinforcement.installEventFilter(self.addData)
+        self.updateData.setFont(font)
+        self.updateData.setObjectName("updateData")
+        # self.updateData.clicked.connect(self.openReinforcement)
+        self.updateData.installEventFilter(self.addData)
 
-        self.btnIFPD = QtWidgets.QPushButton(self.centralwidget)
-        self.btnIFPD.setGeometry(QtCore.QRect(90, 330, 630, 41))
+        self.deleteData = QtWidgets.QPushButton(self.centralwidget)
+        self.deleteData.setGeometry(QtCore.QRect(90, 330, 630, 41))
         font = QtGui.QFont()
         font.setFamily("Tahoma")
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
-        self.btnIFPD.setFont(font)
-        self.btnIFPD.setObjectName("btnIFPD")
-        # self.btnIFPD.clicked.connect(self.openIFPD)
-        self.btnIFPD.installEventFilter(self.addData)
+        self.deleteData.setFont(font)
+        self.deleteData.setObjectName("deleteData")
+        # self.deleteData.clicked.connect(self.openIFPD)
+        self.deleteData.installEventFilter(self.addData)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -100,7 +100,7 @@ class UI_Home(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def eventFilter(self, obj, event):
-        if obj == self.addData or obj == self.btnReinforcement or obj == self.btnIFPD:
+        if obj == self.addData or obj == self.updateData or obj == self.deleteData:
             if event.type() == QtCore.QEvent.Type.Enter:
                 self.animateButton(obj, True)
             elif event.type() == QtCore.QEvent.Type.Leave:
@@ -131,16 +131,16 @@ class UI_Home(object):
                 "Add data to database",
             )
         )
-        self.btnReinforcement.setText(
+        self.updateData.setText(
             _translate(
                 "MainWindow",
-                "Incremental attribute reduction algorithm on the decision when adding object set",
+                "Update data to database",
             )
         )
-        self.btnIFPD.setText(
+        self.deleteData.setText(
             _translate(
                 "MainWindow",
-                "Incremental attribute reduction algorithm on the decision when removing object set",
+                "Delete data from database",
             )
         )
 

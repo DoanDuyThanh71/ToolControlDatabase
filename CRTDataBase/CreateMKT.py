@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS Campaigns (
     Cmt INT UNSIGNED NOT NULL,
     Inbox INT UNSIGNED NOT NULL,
     Budget DECIMAL(12,1) NOT NULL,
-    fOREIGN KEY (Marketer) REFERENCES Employee(EmployeeId)
+    fOREIGN KEY (Marketer) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS Leads (
     CampaignId INT UNSIGNED NOT NULL,
     Status NVARCHAR(255)  NOT NULL,
     Score INT UNSIGNED NOT NULL,
-    FOREIGN KEY (CampaignId) REFERENCES Campaigns(CampaignId)
+    FOREIGN KEY (CampaignId) REFERENCES Campaigns(CampaignId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS SEO (
     ConversionCount INT UNSIGNED NOT NULL,
     ExitRate FLOAT NOT NULL,
     LinkCount INT UNSIGNED NOT NULL,
-    FOREIGN KEY (Creator) REFERENCES Employee(EmployeeId)
+    FOREIGN KEY (Creator) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS PerformanceEvaluationMKT (
     ConversionCount INT UNSIGNED NOT NULL,
     ExitRate FLOAT NOT NULL,
     LinkCount INT UNSIGNED NOT NULL, 
-    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId)
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS KPIMKT (
     ConversionCount INT UNSIGNED NOT NULL,
     ExitRate FLOAT NOT NULL,
     LinkCount INT UNSIGNED NOT NULL,
-    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId)
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 

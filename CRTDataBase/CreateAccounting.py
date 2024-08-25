@@ -10,18 +10,8 @@ cursor.execute("use DBCPN")
 cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
 
 
-# Drop bảng Revenue nếu tồn tại
-# cursor.execute(''' DROP TABLE IF EXISTS Revenue ''')
 
-# Tạo bảng Transactions: Giao dịch
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS Revenue (
-    RevenueId INT UNSIGNED PRIMARY KEY,
-    Date DATE NOT NULL,
-    Amount DECIMAL(12,1) NOT NULL,
-    Foreign key (RevenueId) references Payments(PaymentId)
-)
-''')
+# Drop bảng Revenue nếu tồn tại
 
 
 # Drop bảng Reason nếu tồn tại
@@ -49,8 +39,8 @@ CREATE TABLE IF NOT EXISTS ExpenseReports (
     ReasonId INT UNSIGNED NOT NULL,
     Status ENUM('Approved', 'Pending', 'Rejected', 'Wrong') NOT NULL,
     AcceptDate DATE NOT NULL,
-    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId),
-    Foreign key (ReasonId) references Reason(ReasonId)
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE,
+    Foreign key (ReasonId) REFERENCES Reason(ReasonId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
 
@@ -72,8 +62,8 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS PersonalIncomeTax (
     PersonalIncomeTaxId INT UNSIGNED PRIMARY KEY,
     TaxType  INT UNSIGNED NOT NULL,
-    Foreign key (PersonalIncomeTaxId) references Employee(EmployeeId),
-    Foreign key (TaxType) references TaxTypeDescription(TaxTypeID)
+    Foreign key (PersonalIncomeTaxId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE,
+    Foreign key (TaxType) REFERENCES TaxTypeDescription(TaxTypeID) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
 
@@ -113,7 +103,7 @@ CREATE TABLE IF NOT EXISTS Receivables (
     CustomerId INT UNSIGNED NOT NULL,
     Amount DECIMAL(12,1)  NOT NULL,
     DueDate DATE NOT NULL,
-    Foreign key (CustomerId) references Leads(LeadId)
+    Foreign key (CustomerId) REFERENCES Leads(LeadId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
 
@@ -128,7 +118,7 @@ CREATE TABLE IF NOT EXISTS Payables (
     CustomerId INT UNSIGNED NOT NULL,
     Amount DECIMAL(12,1)  NOT NULL,
     DueDate DATE NOT NULL,
-    Foreign key (CustomerId) references Leads(LeadId)
+    Foreign key (CustomerId) REFERENCES Leads(LeadId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
 
@@ -150,7 +140,7 @@ cursor.execute("""
     CREATE TABLE IF NOT EXISTS PerformanceEvaluationAccounting (
         PerformanceEvaluationAccountingId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         EmployeeId INT UNSIGNED NOT NULL,
-        Month VARCHAR(20) NOT NULL,
+        Date DATE NOT NULL,
         WorkPerformanceScore INT UNSIGNED NOT NULL,
         ConsciousnessScore INT UNSIGNED NOT NULL,
         AveragePaymentTime REAL NOT NULL,
@@ -159,7 +149,7 @@ cursor.execute("""
         AverageProcessingTime REAL NOT NULL,
         PaymentErrorRate REAL NOT NULL,
         CostToRevenueRatio REAL NOT NULL,
-        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId)
+        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
     )
 """)
 
@@ -168,7 +158,7 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS KPIAccounting (
     KPIAccountingId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     EmployeeId INT UNSIGNED NOT NULL,
-    Month VARCHAR(20) NOT NULL,
+    Date Date NOT NULL,
     WorkPerformanceScore INT UNSIGNED NOT NULL,
     ConsciousnessScore INT UNSIGNED NOT NULL,
     AveragePaymentTime REAL NOT NULL,
@@ -177,7 +167,7 @@ CREATE TABLE IF NOT EXISTS KPIAccounting (
     AverageProcessingTime REAL NOT NULL,
     PaymentErrorRate REAL NOT NULL,
     CostToRevenueRatio REAL NOT NULL,
-    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId)
+    FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
 

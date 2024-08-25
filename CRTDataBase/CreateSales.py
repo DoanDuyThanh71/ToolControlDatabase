@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS Orders (
     OrderDate DATE NOT NULL,
     ProductID INT UNSIGNED NOT NULL,
     TotalAmount DECIMAL(12,1) NOT NULL,
-    FOREIGN KEY (CustomerId) REFERENCES Leads(LeadId)
+    FOREIGN KEY (CustomerId) REFERENCES Leads(LeadId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS Payments (
     OrderId INT UNSIGNED NOT NULL,
     PaymentDate DATE NOT NULL,
     Amount DECIMAL(12,1) NOT NULL,
-    FOREIGN KEY (OrderId) REFERENCES Orders(OrderId)
+    FOREIGN KEY (OrderId) REFERENCES Orders(OrderId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS EmployeePerformanceSales (
     CustomerCount INT UNSIGNED NOT NULL,
     TotalRevenue DECIMAL(12,1) NOT NULL,
     DealClosureRate INT UNSIGNED NOT NULL,
-    Foreign KEY (Employee) REFERENCES Employee(EmployeeId)
+    Foreign KEY (Employee) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
@@ -71,8 +71,8 @@ CREATE TABLE IF NOT EXISTS KPISales (
     CustomerCount INT UNSIGNED NOT NULL,
     TotalRevenue DECIMAL(12,1) NOT NULL,
     DealClosureRate INT UNSIGNED NOT NULL,
-    FOREIGN KEY (Employee) REFERENCES Employee(EmployeeId)
-)
+    FOREIGN KEY (Employee) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
+) 
 ''')
 
 

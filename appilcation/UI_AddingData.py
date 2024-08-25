@@ -49,12 +49,13 @@ class UI_Add(object):
             if data:
                 headers = data[0]
                 num_rows = len(data) - 1
+                row_out = min(num_rows, 100)
                 num_cols = len(headers)
                 self.data = data
                 self.tabAns.setColumnCount(num_cols)
-                self.tabAns.setRowCount(9)
+                self.tabAns.setRowCount(row_out)
                 self.tabAns.setHorizontalHeaderLabels(map(str, headers))
-                for row_idx, row_data in enumerate(data[1:10]):
+                for row_idx, row_data in enumerate(data[1:100]):
                     for col_idx, cell_value in enumerate(row_data):
                         item = QtWidgets.QTableWidgetItem(str(cell_value))
                         # Set font and background color for cells

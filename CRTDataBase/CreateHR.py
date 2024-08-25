@@ -33,7 +33,7 @@ cursor.execute("""
         HireDate DATE NOT NULL,
         Salary DECIMAL(12,1)  NOT NULL,
         EmploymentStatus ENUM('Resigned', 'Employed', 'Probation', 'Submitted Resignation') NOT NULL,
-        FOREIGN KEY (DepartmentId) REFERENCES Department(DepartmentId)
+        FOREIGN KEY (DepartmentId) REFERENCES Department(DepartmentId) ON Delete CASCADE On UPDATE CASCADE
     )
 """)
 
@@ -79,9 +79,9 @@ cursor.execute("""
         ApplicantId INT UNSIGNED NOT NULL,
         JobPositionId INT UNSIGNED NOT NULL,
         PassCV ENUM('Pass', 'Fail') NOT NULL,
-        FOREIGN KEY (RecruitmentChannelId) REFERENCES RecruitmentChannel(RecruitmentChannelId),
-        FOREIGN KEY (ApplicantId) REFERENCES Applicant(ApplicantId),
-        FOREIGN KEY (JobPositionId) REFERENCES JobPosition(JobPositionId)
+        FOREIGN KEY (RecruitmentChannelId) REFERENCES RecruitmentChannel(RecruitmentChannelId) ON Delete CASCADE On UPDATE CASCADE,
+        FOREIGN KEY (ApplicantId) REFERENCES Applicant(ApplicantId) ON Delete CASCADE On UPDATE CASCADE,
+        FOREIGN KEY (JobPositionId) REFERENCES JobPosition(JobPositionId) ON Delete CASCADE On UPDATE CASCADE
     )
 """)
 
@@ -94,8 +94,8 @@ cursor.execute("""
         InterviewResult ENUM('Cancel', 'Pass', 'Fail') NOT NULL,
         HireDate DATE,
         InterviewerId INT UNSIGNED,
-        FOREIGN KEY (InterviewerId) REFERENCES Employee(EmployeeId),
-        FOREIGN KEY (ApplicantId) REFERENCES Applicant(ApplicantId)
+        FOREIGN KEY (InterviewerId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE ,
+        FOREIGN KEY (ApplicantId) REFERENCES Applicant(ApplicantId) ON Delete CASCADE On UPDATE CASCADE 
     )
 """)
 
@@ -110,7 +110,7 @@ cursor.execute("""
         UnexcusedAbsences INT NOT NULL,
         WorkPerformanceScore INT NOT NULL,
         OvertimeHours INT NOT NULL,
-        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId)
+        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE 
     )
 """)
 
@@ -125,7 +125,7 @@ cursor.execute("""
         CostPerHire DECIMAL(12,1)  NOT NULL,
         WorkPerformanceScore INT NOT NULL,
         ConsciousnessScore INT NOT NULL,
-        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId)
+        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId)  ON Delete CASCADE On UPDATE CASCADE 
     )
 """)
 
@@ -144,8 +144,8 @@ cursor.execute("""
         EmployeeId INT UNSIGNED NOT NULL,
         ErrorCodeId INT UNSIGNED NOT NULL,
         ErrorDate DATE NOT NULL,
-        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId),
-        FOREIGN KEY (ErrorCodeId) REFERENCES ErrorCode(ErrorCodeId)
+        FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE ,
+        FOREIGN KEY (ErrorCodeId) REFERENCES ErrorCode(ErrorCodeId) ON Delete CASCADE On UPDATE CASCADE 
     )
 """)
 

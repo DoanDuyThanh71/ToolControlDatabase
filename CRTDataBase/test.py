@@ -17,8 +17,16 @@ cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 # for table in tables:
 #     print(table[0])
 
-cursor.execute("SELECT * FROM employee WHERE departmentid = 4")
+
+
+
+cursor.execute("delete from Employee where EmployeeId = 1")
+
+cursor.execute("select * from KPIHR")
 employees = cursor.fetchall()
 
 for employee in employees:
     print(employee)
+    
+db.commit()
+db.close()
