@@ -20,9 +20,8 @@ cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 
 
 
-cursor.execute("delete from Employee where EmployeeId = 1")
 
-cursor.execute("select * from KPIHR")
+cursor.execute("SELECT * FROM JobPosition")
 employees = cursor.fetchall()
 
 for employee in employees:

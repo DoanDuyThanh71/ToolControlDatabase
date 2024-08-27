@@ -1,6 +1,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from UI_Dialog import ErrorDialog
 from UI_ProgressDialog import ProgressDialog
+
 from AddData import insert_data_from_excel
 import os
 import openpyxl as xlsx
@@ -9,24 +10,26 @@ import sys
 class Worker(QtCore.QThread):
     
     finished = QtCore.pyqtSignal()
-    def __init__(self, path, Department, Table):
+    def __init__(self, path, Department, Table, ID):
         super().__init__()
         self.path = path
         self.Department = Department
         self.Table = Table
+        
 
     def run(self):
         shell = False
-        insert_data_from_excel(self.path, self.Department, self.Table)
+        insert_data_from_excel(self.path, self.Department, self.Table, )
         self.finished.emit()
 
 
 
-class UI_Add(object):
+class UI_Update(object):
     def __init__(self) -> None:
         self.path = None
         self.Department = None
         self.Table = None
+        # self.Id = None
         self.department_data = {
             "HR": ["Application", "Applicant", "Department", "Employee", "EmployeeError", "ErrorCode", "Interview", "JobPosition", "KPIHR", "PerformanceEvaluationHR", "RecruitmentChannel"], 
             "MKT": ["Campaigns", "SEO", "KPIMKT", "Leads", "PageViews", "PerformanceEvaluationMKT"],
@@ -58,7 +61,6 @@ class UI_Add(object):
                 for row_idx, row_data in enumerate(data[1:100]):
                     for col_idx, cell_value in enumerate(row_data):
                         item = QtWidgets.QTableWidgetItem(str(cell_value))
-                        # Set font and background color for cells
                         item.setFont(QtGui.QFont("Arial", 10))
                         item.setBackground(QtGui.QColor(240, 240, 240))
                         self.tabAns.setItem(row_idx, col_idx, item)
@@ -69,41 +71,13 @@ class UI_Add(object):
             else:
                 self.labInfor.setText("No file selected.")
             self.tabAns.resizeColumnsToContents()
+    
             
-    def check_data_exist(self, file_path, table_name, column_name):
-        import mysql.connector
-        import pandas as pd
-        
-        # Kết nối tới cơ sở dữ liệu
-        db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
-        cursor = db.cursor()
-        cursor.execute("USE DBCPN")  # Chọn cơ sở dữ liệu
-        
-        # Đọc dữ liệu từ file Excel
-        data = pd.read_excel(file_path)
-        
-        # Lấy tất cả giá trị ID từ cơ sở dữ liệu
-        query = f"SELECT {column_name} FROM {table_name}"
-        cursor.execute(query)
-        db_ids = set(row[0] for row in cursor.fetchall())
-        
-        if len(db_ids) == 0:
-            return True
-        
-        # So sánh với các giá trị trong file Excel
-        for index, row in data.iterrows():
-            value = row[column_name]
-            if value not in db_ids:
-                return False  # Nếu có giá trị không tồn tại trong cơ sở dữ liệu
-
-        return True  # Nếu tất cả giá trị đều tồn tại
-
-        
     def run_app(self):
         if not self.path:
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("No file selected. Please import a xlsx file.")
+            self.update_data()
             return
+        
         
         # Check if data contains null values
         if any(None in row for row in self.data):
@@ -112,21 +86,21 @@ class UI_Add(object):
             return
         
         
+        # Check for duplicates in the data
+        for row_idx, row_data in enumerate(self.data[1:]):
+            if self.data[1:].count(row_data) > 1:
+                error_dialog = ErrorDialog("")
+                error_dialog.show_error("Duplicate values found in the data. Please ensure all values are unique.")
+                return
+        
         # Check for duplicates in the first column
         first_column_values = [row[0] for row in self.data[1:]]
         if len(first_column_values) != len(set(first_column_values)):
             error_dialog = ErrorDialog("")
-            error_dialog.show_error("Duplicate values found in the first column. Please ensure all values are unique.")
+            error_dialog.show_error("Duplicate values found in the ID. Please ensure all values are unique.")
             return
         
-        table_name = self.Table.currentText()
-        column_name = table_name  + 'Id'
-        
-        if not self.check_data_exist(self.path,  table_name, column_name):
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("Data already exists in the database. Please ensure all values are unique.")
-            return
-        
+
                 
         self.worker = Worker(self.path, self.Department.currentText(), self.Table.currentText())
         self.progress_dialog = ProgressDialog()
@@ -134,10 +108,10 @@ class UI_Add(object):
         self.worker.finished.connect(self.on_process_finished)
         self.worker.start()
         
-    
+
+
     def on_process_finished(self):
         self.progress_dialog.close()
-
 
     def go_back(self):
         from UI_Home import UI_Home
@@ -196,7 +170,6 @@ class UI_Add(object):
         self.btnProcess.setFont(font)
         self.btnProcess.setObjectName("btnProcess")
 
-        # Label and Line Edit for Alpha
         self.label = QtWidgets.QLabel(parent=self.centralwidget)
         self.label.setGeometry(QtCore.QRect(40, 90, 111, 21))
         font = QtGui.QFont()
@@ -217,6 +190,8 @@ class UI_Add(object):
         self.Department.setCurrentIndex(0)
 
         self.Department.currentIndexChanged.connect(self.update_table)
+        
+
         
 
 
@@ -251,6 +226,26 @@ class UI_Add(object):
         self.tabAns.setObjectName("tabAns")
         self.tabAns.setColumnCount(0)
         self.tabAns.setRowCount(0)
+        
+        self.label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(40, 90, 111, 21))
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(12)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        
+        # Line Edit for ID
+        self.label_3 = QtWidgets.QLabel(parent=self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(40, 190, 111, 21))
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(12)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.ID = QtWidgets.QLineEdit(parent=self.centralwidget)
+        self.ID.setGeometry(QtCore.QRect(160, 190, 131, 20))
+        self.ID.setObjectName("ID")
 
         # Setting up the main window
         mainWindow.setCentralWidget(self.centralwidget)
@@ -265,9 +260,9 @@ class UI_Add(object):
         self.retranslateUi(mainWindow)
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
         self.Department.currentIndexChanged.connect(self.update_table)
+        self.ID.textChanged.connect(self.print_data)
 
     def update_table(self):
-            
             selected_department = self.Department.currentText()
             if selected_department == "":
                 selected_department = self.Department.setCurrentIndex(0)
@@ -276,14 +271,144 @@ class UI_Add(object):
             self.Table.clear()
             for table in tables:
                 self.Table.addItem(table)
-     
+    
+    
+    def update_data(self):
+        import mysql.connector
+        
+        table_name = self.Table.currentText()
+        
+        if not table_name:
+            print("No table selected.")
+            return
+        
+        try:
+            db = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="Thanhdua12@",
+                database="DBCPN"  # Thay bằng tên cơ sở dữ liệu của bạn
+            )
+            cursor = db.cursor()
+            
+            
+            # Lấy dữ liệu đã chỉnh sửa từ QTableWidget
+            rows = self.tabAns.rowCount() 
+            cols = self.tabAns.columnCount()
+            columns = [self.tabAns.horizontalHeaderItem(col_idx).text() for col_idx in range(cols)]
+            
+                
+            for row_idx in range(rows):  
+                row_data = []
+                for col_idx in range(cols):
+                    item = self.tabAns.item(row_idx, col_idx)
+                    if item is not None:
+                        row_data.append(item.text())
+                    else:
+                        row_data.append(None)
+                        
+                print("Row data:", row_data)
+                id_value = row_data[0]  # Giả sử cột đầu tiên là ID
+                if id_value:
+                    # print(5)
+                    update_values = row_data[1:]  # Các giá trị khác để cập nhật
+                    update_values_placeholders = ', '.join([f"{col} = %s" for col in columns[1:]])
+                    
+                    query = f"UPDATE {table_name} SET {update_values_placeholders} WHERE {table_name}Id = %s"
+                    
+                    # Thêm id_value vào danh sách các giá trị
+                    values = update_values + [id_value]
+                    cursor.execute(query, tuple(values))
+                    
+                    print(query)
+            
+            db.commit()
+            db.close()
+            print("Data updated successfully.")
+        
+        except Exception as e:
+            print(f"Error: {e}")
+            
+        
+    def print_data(self):
+        import mysql.connector
+        
+        id_value = self.ID.text()
+        table_name = self.Table.currentText()
+        
+        if id_value:
+            try:
+                # Kết nối tới cơ sở dữ liệu MySQL
+                db = mysql.connector.connect(
+                    host="localhost", 
+                    user="root", 
+                    password="Thanhdua12@", 
+                    database="DBCPN"  # Thay bằng tên cơ sở dữ liệu của bạn
+                )
+                cursor = db.cursor()
+
+                # Lấy thông tin cột
+                cursor.execute(f"SHOW COLUMNS FROM {table_name}")
+                columns = [column[0] for column in cursor.fetchall()]
+
+                # Thực hiện truy vấn với tham số
+                query = f"SELECT * FROM {table_name} WHERE {table_name}Id = %s"
+                cursor.execute(query, (id_value,))
+
+                # Lấy kết quả
+                result = cursor.fetchall()
+
+                # Đóng kết nối
+                db.close()
+
+                # Cập nhật QTableWidget
+                num_cols = len(columns)
+                num_rows = len(result)  
+
+                self.tabAns.clearContents()
+                self.tabAns.setRowCount(num_rows)
+                self.tabAns.setColumnCount(num_cols)
+
+                # Thêm tên cột vào dòng đầu tiên
+                self.tabAns.setHorizontalHeaderLabels(columns)
+                self.tabAns.resizeColumnsToContents()
+                # for col_idx, column_name in enumerate(columns):
+                #     item = QtWidgets.QTableWidgetItem(column_name)
+                #     self.tabAns.setItem(0, col_idx, item)
+
+                for row_idx, row_data in enumerate(result, start=0):
+                    for col_idx, cell_value in enumerate(row_data):
+                        item = QtWidgets.QTableWidgetItem(str(cell_value))
+                        self.tabAns.setItem(row_idx, col_idx, item)
+                        
+                self.tabAns.setStyleSheet("""
+                QHeaderView::section {
+                    border-bottom: 2px solid black;
+                }
+                QTableWidget::item {
+                    border: none;
+                }
+            """)
+                self.tabAns.resizeColumnsToContents()
+
+            except Exception as e:
+                print(f"Error: {e}")
+        else:
+            # Nếu ID rỗng, xóa dữ liệu hiện tại
+            self.tabAns.clearContents()
+            self.tabAns.setRowCount(0)
+            self.tabAns.setColumnCount(0)
+
+            
+            
     def retranslateUi(self, mainWindow):
         _translate = QtCore.QCoreApplication.translate
-        mainWindow.setWindowTitle(_translate("mainWindow", "Add Data to Database"))
+        mainWindow.setWindowTitle(_translate("mainWindow", "Update Data to Database"))
         self.btnImportData.setText(_translate("mainWindow", "Import Data"))
         self.btnProcess.setText(_translate("mainWindow", "Process"))
         self.label.setText(_translate("mainWindow", " Department"))
         self.label_2.setText(_translate("mainWindow", "Table"))
+        self.label_3.setText(_translate("mainWindow", "ID"))
         
         self.Department.setItemText(0, _translate("mainWindow", "HR"))
         self.Department.setItemText(1, _translate("mainWindow", "MKT"))
@@ -311,7 +436,7 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
     mainWindow = QtWidgets.QMainWindow()
-    ui = UI_Add()
+    ui = UI_Update()
     ui.setupUi(mainWindow)
     mainWindow.show()
     sys.exit(app.exec())

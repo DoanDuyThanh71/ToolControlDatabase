@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS Payments (
 
 # Tạo bảng EmployeePerformance
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS EmployeePerformanceSales (
-    EmployeePerformanceSalesID INT UNSIGNED PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS PerformanceEvaluationSales (
+    PerformanceEvaluationId INT UNSIGNED PRIMARY KEY,
     Employee INT UNSIGNED NOT NULL,
     Date DATE NOT NULL,
     WorkPerformanceScore INT UNSIGNED NOT NULL,

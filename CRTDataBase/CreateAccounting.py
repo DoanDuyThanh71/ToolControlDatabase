@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS PersonalIncomeTax (
 # Tạo bảng Assets: Tài sản công ty
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Assets (
-    AssetId INT UNSIGNED PRIMARY KEY,
+    AssetsId INT UNSIGNED PRIMARY KEY,
     ProductName VARCHAR(255) NOT NULL,
     Quantity INT UNSIGNED NOT NULL,
     UnitPrice DECIMAL(12,1)  NOT NULL

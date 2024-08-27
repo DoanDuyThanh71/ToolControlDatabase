@@ -1,10 +1,11 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from UI_AddingData import UI_Add
+from UI_UpdateData import UI_Update
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class UI_Home(object):
-    def openReducedData(self):
+    def openAddData(self):
         self.window = QtWidgets.QMainWindow()
         self.ui = UI_Add()
         self.ui.setupUi(self.window)
@@ -13,14 +14,14 @@ class UI_Home(object):
             0, QtWidgets.QApplication.instance().activeWindow().close
         )
 
-    # def openReinforcement(self):
-    #     self.window = QtWidgets.QMainWindow()
-    #     # self.ui = Ui_Reinforcement()
-    #     self.ui.setupUi(self.window)
-    #     self.window.show()
-    #     QtCore.QTimer.singleShot(
-    #         0, QtWidgets.QApplication.instance().activeWindow().close
-    #     )
+    def openUpDateData(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = UI_Update()
+        self.ui.setupUi(self.window)
+        self.window.show()
+        QtCore.QTimer.singleShot(
+            0, QtWidgets.QApplication.instance().activeWindow().close
+        )
 
     # def openIFPD(self):
     #     self.window = QtWidgets.QMainWindow()
@@ -60,7 +61,7 @@ class UI_Home(object):
         font.setWeight(75)
         self.addData.setFont(font)
         self.addData.setObjectName("addData")
-        self.addData.clicked.connect(self.openReducedData)
+        self.addData.clicked.connect(self.openAddData)
         self.addData.installEventFilter(self.addData)
 
         self.updateData = QtWidgets.QPushButton(self.centralwidget)
@@ -72,7 +73,7 @@ class UI_Home(object):
         font.setWeight(75)
         self.updateData.setFont(font)
         self.updateData.setObjectName("updateData")
-        # self.updateData.clicked.connect(self.openReinforcement)
+        self.updateData.clicked.connect(self.openUpDateData)
         self.updateData.installEventFilter(self.addData)
 
         self.deleteData = QtWidgets.QPushButton(self.centralwidget)

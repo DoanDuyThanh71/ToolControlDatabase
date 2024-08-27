@@ -2,6 +2,9 @@ import pandas as pd
 import pandas as pd
 import mysql.connector
 
+
+
+
 # HR 
 def add_to_Department(file_path):
     db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
@@ -36,36 +39,12 @@ def add_to_Application(file_path):
     for index, row in data.iterrows():
         # Lấy dữ liệu từ file Excel
         applicant_id = row["ApplicantId"]
-        full_name = row["FullName"]
-        date_of_birth = row["DateOfBirth"]
-        gender = row["Gender"]
-        address = row["Address"]
-        phone_number = row["PhoneNumber"]
-        email = row["Email"]
-        level = row["Level"]
-
         application_id = row["ApplicationId"]
         application_date = row["ApplicationDate"]
         recruitment_channel_id = row["RecruitmentChannelId"]
         job_position_id = row["JobPositionId"]
         pass_cv = row["PassCv"]
 
-        # Chèn dữ liệu vào bảng Applicant
-        cursor.execute(
-            """
-            INSERT INTO Applicant (ApplicantId, FullName, DateOfBirth, Gender, Address, PhoneNumber, Email, Level)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE 
-                FullName = VALUES(FullName),
-                DateOfBirth = VALUES(DateOfBirth),
-                Gender = VALUES(Gender),
-                Address = VALUES(Address),
-                PhoneNumber = VALUES(PhoneNumber),
-                Email = VALUES(Email),
-                Level = VALUES(Level)
-            """,
-            (applicant_id, full_name, date_of_birth, gender, address, phone_number, email, level)
-        )
 
         # Chèn dữ liệu vào bảng Application
         cursor.execute(
@@ -86,6 +65,46 @@ def add_to_Application(file_path):
     db.commit()
     db.close()
         
+def add_to_Applicant(file_path):
+    db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
+    cursor = db.cursor()
+    cursor.execute("use DBCPN")  # Chọn cơ sở dữ liệu
+
+    # Đọc dữ liệu từ file Excel
+    data = pd.read_excel(file_path)
+
+    for index, row in data.iterrows():
+        # Lấy dữ liệu từ file Excel
+        applicant_id = row["ApplicantId"]
+        full_name = row["FullName"]
+        date_of_birth = row["DateOfBirth"]
+        gender = row["Gender"]
+        address = row["Address"]
+        phone_number = row["PhoneNumber"]
+        email = row["Email"]
+        level = row["Level"]
+
+
+
+        # Chèn dữ liệu vào bảng Applicant
+        cursor.execute(
+            """
+            INSERT INTO Applicant (ApplicantId, FullName, DateOfBirth, Gender, Address, PhoneNumber, Email, Level)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE 
+                FullName = VALUES(FullName),
+                DateOfBirth = VALUES(DateOfBirth),
+                Gender = VALUES(Gender),
+                Address = VALUES(Address),
+                PhoneNumber = VALUES(PhoneNumber),
+                Email = VALUES(Email),
+                Level = VALUES(Level)
+            """,
+            (applicant_id, full_name, date_of_birth, gender, address, phone_number, email, level)
+        )
+
+    db.commit()
+    db.close()
 
 def add_to_Employee(file_path):
     
@@ -1289,74 +1308,56 @@ def add_to_Assets(file_path):
 
 
 def insert_data_from_excel(file_path, department, table):
-    if department == 'HR':
-        if table == 'Application':
-            add_to_Application(file_path)
-        if table == 'Department':
-            add_to_Department(file_path)
-        if table == 'Employee':
-            add_to_Employee(file_path)
-        if table == 'EmployeeError':
-            add_to_EmployeeError(file_path)
-        if table == 'ErrorCode':
-            add_to_ErrorCode(file_path)
-        if table == 'InterView':    
-            add_to_InterView(file_path)
-        if table == 'JobPosition':
-            add_to_JobPosition(file_path)
-        if table == 'KPIHR':
-            add_to_KPIHR(file_path)
-        if table == 'PerformanceEvaluation':
-            add_to_PerformanceEvaluationHR(file_path)
-        if table == 'RecruitmentChannel':
-            add_to_RecruitmentChannel(file_path)
-            
-    elif department == 'MKT':
-        if table == 'Campaign':
-            add_to_Campaign(file_path)
-        if table == 'KPIMKT':
-            add_to_KPIMKT(file_path)
-        if table == 'SEO':
-            add_to_SEO(file_path)
-        if table == 'Leads':
-            add_to_Leads(file_path)
-        if table == 'PageView':
-            add_to_PageView(file_path)
-        if table == 'PerformanceEvaluationMKT':
-            add_to_PerformanceEvaluationMKT(file_path)
-        
-    elif department == 'SALES':
-        if table == 'PerformanceEvaluationSales':
-            add_to_PerformanceEvaluationSales(file_path)
-        if table == 'KPISales':
-            add_to_KPISales(file_path)
-        if table == 'Order':
-            add_to_Order(file_path)
-        if table == 'Products':
-            add_to_Products(file_path)
-        if table == 'Payments':
-            add_to_Payments(file_path)
-    
-    elif department == 'Accounting':
-        if table == 'Assets':
-            add_to_Assets(file_path)
-        if table == 'ExpenseReports':
-            add_to_ExpenseReports(file_path)
-        if table == 'Fund':
-            add_to_Fund(file_path)
-        if table == 'KPIAccounting':
-            add_to_KPIAccounting(file_path)
-        if table == 'Payables':
-            add_to_Payables(file_path)
-        if table == 'PerformanceEvaluationAccounting':
-            add_to_PerformanceEvaluationAccounting(file_path)
-        if table == 'PersonalIncomeTax':
-            add_to_PersonalIncomeTax(file_path)
-        if table == 'Reason':
-            add_to_Reason(file_path)
-        if table == 'Receivables':
-            add_to_Receivables(file_path)
-        if table == 'Taxes':
-            add_to_Taxes(file_path)
-        if table == 'TaxTypeDescription':
-            add_to_TaxTypeDescription(file_path)
+    add_functions = {
+        'HR': {
+            'Application': add_to_Application,
+            'Applicant': add_to_Applicant,
+            'Department': add_to_Department,
+            'Employee': add_to_Employee,
+            'EmployeeError': add_to_EmployeeError,
+            'ErrorCode': add_to_ErrorCode,
+            'InterView': add_to_InterView,
+            'JobPosition': add_to_JobPosition,
+            'KPIHR': add_to_KPIHR,
+            'PerformanceEvaluation': add_to_PerformanceEvaluationHR,
+            'RecruitmentChannel': add_to_RecruitmentChannel
+        },
+        'MKT': {
+            'Campaign': add_to_Campaign,
+            'KPIMKT': add_to_KPIMKT,
+            'SEO': add_to_SEO,
+            'Leads': add_to_Leads,
+            'PageView': add_to_PageView,
+            'PerformanceEvaluationMKT': add_to_PerformanceEvaluationMKT
+        },
+        'SALES': {
+            'PerformanceEvaluationSales': add_to_PerformanceEvaluationSales,
+            'KPISales': add_to_KPISales,
+            'Order': add_to_Order,
+            'Products': add_to_Products,
+            'Payments': add_to_Payments
+        },
+        'Accounting': {
+            'Assets': add_to_Assets,
+            'ExpenseReports': add_to_ExpenseReports,
+            'Fund': add_to_Fund,
+            'KPIAccounting': add_to_KPIAccounting,
+            'Payables': add_to_Payables,
+            'PerformanceEvaluationAccounting': add_to_PerformanceEvaluationAccounting,
+            'PersonalIncomeTax': add_to_PersonalIncomeTax,
+            'Reason': add_to_Reason,
+            'Receivables': add_to_Receivables,
+            'Taxes': add_to_Taxes,
+            'TaxTypeDescription': add_to_TaxTypeDescription
+        }
+    }
+
+    file_path 
+    department 
+    table_name = table 
+
+    # Gọi hàm tương ứng
+    if department in add_functions and table_name in add_functions[department]:
+        add_functions[department][table_name](file_path)
+    else:
+        print(f"No function found for department '{department}' and table '{table_name}'.")

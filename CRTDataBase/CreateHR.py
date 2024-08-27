@@ -101,7 +101,7 @@ cursor.execute("""
 
 # Create Table for Performance Evaluations
 cursor.execute("""
-    CREATE TABLE IF NOT EXISTS PerformanceEvaluation (
+    CREATE TABLE IF NOT EXISTS PerformanceEvaluationHR (
         PerformanceEvaluationId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         EmployeeId INT UNSIGNED NOT NULL,
         EvaluationDate DATE NOT NULL,
