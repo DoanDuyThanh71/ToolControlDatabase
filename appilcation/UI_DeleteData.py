@@ -1,13 +1,12 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from UI_Dialog import ErrorDialog
 from UI_ProgressDialog import ProgressDialog
+from UI_DialogCf import CfDialog
 
-from AddData import insert_data_from_excel
+# from AddData import insert_data_from_excel
 import os
 import openpyxl as xlsx
 import sys
-
-from UI_DialogCf import CfDialog
 
 class Worker(QtCore.QThread):
     
@@ -21,12 +20,12 @@ class Worker(QtCore.QThread):
 
     def run(self):
         shell = False
-        insert_data_from_excel(self.path, self.Department, self.Table, )
+        # insert_data_from_excel(self.path, self.Department, self.Table, )
         self.finished.emit()
 
 
 
-class UI_Update(object):
+class UI_DeleteData(object):
     def __init__(self) -> None:
         self.path = None
         self.Department = None
@@ -79,17 +78,28 @@ class UI_Update(object):
         value = self.ID.text()
         if not self.path:
             if not value:
-                error_dialog = ErrorDialog("No data update")
-                result = error_dialog.show_error("No data update")
+                error_dialog = ErrorDialog("No data delete")
+                result = error_dialog.show_error("No data delete")
                 return 
-            cf_dialog = CfDialog("Are you sure you want to Update this data?")
-            result = cf_dialog.show_error("Are you sure you want to Update this data?")
+            cf_dialog = CfDialog("Are you sure you want to delete this data?")
+            result = cf_dialog.show_error("Are you sure you want to delete this data?")
 
             if result == ErrorDialog.DialogCode.Accepted:
-                self.update_data()  # Thực hiện lệnh delete
+                self.delete_data()  
             else:
                 print("Deletion canceled.")
             return
+        else:
+            cf_dialog = CfDialog("Are you sure you want to delete this data?")
+            result = cf_dialog.show_error("Are you sure you want to delete this data?")
+            if result == ErrorDialog.DialogCode.Accepted:
+                self.delete_data() 
+            else:
+                print("Deletion canceled.")
+            return
+                
+              
+        
         
         
         # Check if data contains null values
@@ -118,11 +128,11 @@ class UI_Update(object):
         self.progress_dialog.show()
         self.worker.finished.connect(self.on_process_finished)
         self.worker.start()
-        
 
 
     def on_process_finished(self):
         self.progress_dialog.close()
+
 
     def go_back(self):
         from UI_Home import UI_Home
@@ -201,10 +211,6 @@ class UI_Update(object):
         self.Department.setCurrentIndex(0)
 
         self.Department.currentIndexChanged.connect(self.update_table)
-        
-
-        
-
 
         # Label and Line Edit for Selected Row
         self.label_2 = QtWidgets.QLabel(parent=self.centralwidget)
@@ -288,61 +294,84 @@ class UI_Update(object):
                 self.Table.addItem(table)
     
     
-    def update_data(self):
+    def delete_data(self):
+        
         import mysql.connector
-        
-        table_name = self.Table.currentText()
-        
-        if not table_name:
-            print("No table selected.")
-            return
- 
+        import pandas as pd
         try:
-            db = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                password="Thanhdua12@",
-                database="DBCPN"  # Thay bằng tên cơ sở dữ liệu của bạn
-            )
-            cursor = db.cursor()
+            id_list = []
+            id_value = self.ID.text()
+            table_name = self.Table.currentText()
             
-            
-            # Lấy dữ liệu đã chỉnh sửa từ QTableWidget
-            rows = self.tabAns.rowCount() 
-            cols = self.tabAns.columnCount()
-            columns = [self.tabAns.horizontalHeaderItem(col_idx).text() for col_idx in range(cols)]
-            
-                
-            for row_idx in range(rows):  
-                row_data = []
-                for col_idx in range(cols):
-                    item = self.tabAns.item(row_idx, col_idx)
-                    if item is not None:
-                        row_data.append(item.text())
+            # Kiểm tra xem đường dẫn file Excel có hợp lệ không
+            if self.path:
+                try:
+                    # Đọc dữ liệu từ file Excel
+                    data = pd.read_excel(self.path)
+                    
+                    if not data.empty:
+                        # Lấy cột ID từ file Excel
+                        id_column = data.columns[0]  # Giả sử cột ID là cột đầu tiên
+
+                        # Tạo danh sách các ID từ file Excel
+                        id_list = data[id_column].dropna().astype(int).tolist()
                     else:
-                        row_data.append(None)
-                        
-                print("Row data:", row_data)
-                id_value = row_data[0]  # Giả sử cột đầu tiên là ID
-                if id_value:
-                    # print(5)
-                    update_values = row_data[1:]  # Các giá trị khác để cập nhật
-                    update_values_placeholders = ', '.join([f"{col} = %s" for col in columns[1:]])
-                    
-                    query = f"UPDATE {table_name} SET {update_values_placeholders} WHERE {table_name}Id = %s"
-                    
-                    # Thêm id_value vào danh sách các giá trị
-                    values = update_values + [id_value]
-                    cursor.execute(query, tuple(values))
-                    
-                    print(query)
+                        print("The Excel file is empty or does not contain any valid data.")
+                except Exception as e:
+                    print(f"Error reading Excel file: {e}")
             
-            db.commit()
-            db.close()
-            print("Data updated successfully.")
-        
+            if id_value:
+                # Xử lý các ID nhập vào
+                ranges = id_value.split(',')
+                for item in ranges:
+                    if '-' in item:
+                        start, end = map(int, item.split('-'))
+                        id_list.extend(range(start, end + 1))
+                    else:
+                        id_list.append(int(item.strip()))
+            
+            if id_list:
+                try:
+                    # Kết nối tới cơ sở dữ liệu MySQL
+                    db = mysql.connector.connect(
+                        host="localhost", 
+                        user="root", 
+                        password="Thanhdua12@", 
+                        database="DBCPN"
+                    )
+                    cursor = db.cursor()            
+
+                    # Thực hiện xoá các bản ghi với các ID trong danh sách
+                    query = f"DELETE FROM {table_name} WHERE {table_name}Id = %s"
+                    for id_value in id_list:
+                        cursor.execute(query, (id_value,))
+
+                    # Xác nhận thay đổi
+                    db.commit()
+
+                    # Đóng kết nối
+                    db.close()
+
+                    print(f"Deleted IDs: {id_list}")
+
+                except Exception as e:
+                    print(f"Error: {e}")
+            
+            else:
+                print("No valid IDs provided.")
+                
+            # Cập nhật giao diện người dùng
+            self.tabAns.clearContents()
+            self.tabAns.setRowCount(0)
+            self.tabAns.setColumnCount(0)
+            
         except Exception as e:
             print(f"Error: {e}")
+
+    
+    
+   
+
             
         
     def print_data(self):
@@ -365,10 +394,24 @@ class UI_Update(object):
                 # Lấy thông tin cột
                 cursor.execute(f"SHOW COLUMNS FROM {table_name}")
                 columns = [column[0] for column in cursor.fetchall()]
+                
+                id_list = []
+                for part in id_value.split(','):
+                    part = part.strip()
+                    if '-' in part:
+                        # Xử lý dãy ID có dấu gạch ngang
+                        start, end = part.split('-')
+                        id_list.extend(map(str, range(int(start), int(end) + 1)))
+                    else:
+                        id_list.append(part)
+                        
+                format_strings = ','.join(['%s'] * len(id_list))
+                query = f"SELECT * FROM {table_name} WHERE {table_name}Id IN ({format_strings})"
+                cursor.execute(query, tuple(id_list))
 
-                # Thực hiện truy vấn với tham số
-                query = f"SELECT * FROM {table_name} WHERE {table_name}Id = %s"
-                cursor.execute(query, (id_value,))
+                # # Thực hiện truy vấn với tham số
+                # query = f"SELECT * FROM {table_name} WHERE {table_name}Id = %s"
+                # cursor.execute(query, (id_value,))
 
                 # Lấy kết quả
                 result = cursor.fetchall()
@@ -378,7 +421,8 @@ class UI_Update(object):
 
                 # Cập nhật QTableWidget
                 num_cols = len(columns)
-                num_rows = len(result)  
+                num_rows = min(100,len(result))  
+                
 
                 self.tabAns.clearContents()
                 self.tabAns.setRowCount(num_rows)
@@ -418,7 +462,7 @@ class UI_Update(object):
             
     def retranslateUi(self, mainWindow):
         _translate = QtCore.QCoreApplication.translate
-        mainWindow.setWindowTitle(_translate("mainWindow", "Update Data to Database"))
+        mainWindow.setWindowTitle(_translate("mainWindow", "Delete Data to Database"))
         self.btnImportData.setText(_translate("mainWindow", "Import Data"))
         self.btnProcess.setText(_translate("mainWindow", "Process"))
         self.label.setText(_translate("mainWindow", " Department"))
@@ -440,8 +484,9 @@ class UI_Update(object):
         self.Table.addItem("InterView")
         self.Table.addItem("JobPosition")
         self.Table.addItem("KPIHR")
-        self.Table.addItem("PerformanceEvaluationHR")
+        self.Table.addItem("PerformanceEvaluation")
         self.Table.addItem("RecruitmentChannel")
+        
         
 
 
@@ -451,7 +496,7 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
     mainWindow = QtWidgets.QMainWindow()
-    ui = UI_Update()
+    ui = UI_DeleteData()
     ui.setupUi(mainWindow)
     mainWindow.show()
     sys.exit(app.exec())

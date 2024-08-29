@@ -1,6 +1,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from UI_Dialog import ErrorDialog
 from UI_ProgressDialog import ProgressDialog
+from UI_DialogCf import CfDialog
 from AddData import insert_data_from_excel
 import os
 import openpyxl as xlsx
@@ -28,10 +29,10 @@ class UI_Add(object):
         self.Department = None
         self.Table = None
         self.department_data = {
-            "HR": ["Application", "Applicant", "Department", "Employee", "EmployeeError", "ErrorCode", "Interview", "JobPosition", "KPIHR", "PerformanceEvaluationHR", "RecruitmentChannel"], 
-            "MKT": ["Campaigns", "SEO", "KPIMKT", "Leads", "PageViews", "PerformanceEvaluationMKT"],
-            "SALES": ["PerformanceEvaluationSales", "KPISales", "Orders", "Products", "Payments"],
-            "Accounting": ["Assets", "ExpenseReports", "Fund", "KPIAccounting", "Payables", "PerformanceEvaluationAccounting", "PersonalIncomeTax", "Reason", "Receivables", "Taxes", "TaxTypeDescription"]
+            "HR": ["Application", "Applicant" , "Department", "Employee", "EmployeeError", "ErrorCode", "Interview", "JobPosition", "KPIHR", "PerformanceEvaluationHR", "RecruitmentChannel"], 
+            "MKT": ["Campaign", "SEO", "KPIMKT", "Leads", "PageView", "PerformanceEvaluationMKT"],
+            "SALES": ["PerformanceEvaluationSale", "KPISale", "Orders", "Product", "Payment"],
+            "Accounting": ["Asset", "ExpenseReport", "Fund", "KPIAccounting", "Payable", "PerformanceEvaluationAccounting", "PersonalIncomeTax", "Reason", "Receivable", "Tax", "TaxTypeDescription"]
         }
 
     def importData(self):
@@ -127,12 +128,20 @@ class UI_Add(object):
             error_dialog.show_error("Data already exists in the database. Please ensure all values are unique.")
             return
         
-                
-        self.worker = Worker(self.path, self.Department.currentText(), self.Table.currentText())
-        self.progress_dialog = ProgressDialog()
-        self.progress_dialog.show()
-        self.worker.finished.connect(self.on_process_finished)
-        self.worker.start()
+        if self.path:
+            cf_dialog = CfDialog("Are you sure you want to add this data?")
+            result = cf_dialog.show_error("Are you sure you want to add this data?")
+
+            if result == ErrorDialog.DialogCode.Accepted:
+                self.worker = Worker(self.path, self.Department.currentText(), self.Table.currentText())
+                self.progress_dialog = ProgressDialog()
+                self.progress_dialog.show()
+                self.worker.finished.connect(self.on_process_finished)
+                self.worker.start()
+            else:
+                print("Add canceled.")
+            return
+        
         
     
     def on_process_finished(self):
@@ -292,6 +301,7 @@ class UI_Add(object):
         
         self.Table.clear()
         self.Table.addItem("Application")
+        self.Table.addItem("Applicant")
         self.Table.addItem("Department")
         self.Table.addItem("Employee")
         self.Table.addItem("EmployeeError")
@@ -299,7 +309,7 @@ class UI_Add(object):
         self.Table.addItem("InterView")
         self.Table.addItem("JobPosition")
         self.Table.addItem("KPIHR")
-        self.Table.addItem("PerformanceEvaluation")
+        self.Table.addItem("PerformanceEvaluationHR")
         self.Table.addItem("RecruitmentChannel")
         
         

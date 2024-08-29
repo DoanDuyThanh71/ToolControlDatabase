@@ -336,7 +336,7 @@ def add_to_PerformanceEvaluationHR(file_path):
     
     # Lặp qua từng hàng trong dữ liệu và chèn vào bảng PerformanceEvaluationHR
     for index, row in data.iterrows():
-        performance_evaluation_id = row["PerformanceEvaluationId"]
+        performance_evaluation_id = row["PerformanceEvaluationHRId"]
         employee_id = row["EmployeeId"]
         evaluation_date = row["EvaluationDate"]
         consciousness_score = row["ConsciousnessScore"]
@@ -348,7 +348,7 @@ def add_to_PerformanceEvaluationHR(file_path):
         cursor.execute(
             """
             INSERT INTO PerformanceEvaluationHR 
-            (PerformanceEvaluationId, EmployeeId, EvaluationDate, ConsciousnessScore, DisciplinaryViolations, UnexcusedAbsences, WorkPerformanceScore, OvertimeHours)
+            (PerformanceEvaluationHRId, EmployeeId, EvaluationDate, ConsciousnessScore, DisciplinaryViolations, UnexcusedAbsences, WorkPerformanceScore, OvertimeHours)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
                 EmployeeId = VALUES(EmployeeId),
@@ -476,7 +476,7 @@ def add_to_Leads(file_path):
     
     # Duyệt qua từng hàng trong file Excel và chèn vào bảng Lead
     for index, row in data.iterrows():
-        lead_id = row["LeadId"]
+        lead_id = row["LeadsId"]
         name = row["Name"]
         address = row["Address"]
         phone = row["Phone"]
@@ -489,7 +489,7 @@ def add_to_Leads(file_path):
         score = row["Score"]
         
         cursor.execute("""
-            INSERT INTO Leads (LeadId, Name, Address, Phone, Email, Age, Gender, Date, CampaignId, Status, Score)
+            INSERT INTO Leads (LeadsId, Name, Address, Phone, Email, Age, Gender, Date, CampaignId, Status, Score)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
                 Name = VALUES(Name),
@@ -535,7 +535,7 @@ def add_to_PageView(file_path):
         shares = row["Shares"]
         
         cursor.execute("""
-            INSERT INTO PageViews (PageViewId, Date, Page, PageViews, BounceRate, AvgTimeOnPage, Likes, Comments, Shares)
+            INSERT INTO PageView (PageViewId, Date, Page, PageViews, BounceRate, AvgTimeOnPage, Likes, Comments, Shares)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
                 Date = VALUES(Date),
@@ -563,7 +563,7 @@ def add_to_PerformanceEvaluationMKT(file_path):
     data = pd.read_excel(file_path)
     for index, row in data.iterrows():
         cursor.execute("""
-            INSERT INTO PerformanceEvaluationMKT (EvaluationMKTId, EmployeeId, Date, WorkPerformanceScore, ConsciousnessScore, LeadCount, PageViews, BounceRate, AvgTimeOnPage, Likes, Comments, Shares, KeywordRanking, WebTraffic, OrganicKeywordCount, ConversionCount, ExitRate, LinkCount)
+            INSERT INTO PerformanceEvaluationMKT (PerformanceEvaluationMKTId, EmployeeId, Date, WorkPerformanceScore, ConsciousnessScore, LeadCount, PageViews, BounceRate, AvgTimeOnPage, Likes, Comments, Shares, KeywordRanking, WebTraffic, OrganicKeywordCount, ConversionCount, ExitRate, LinkCount)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE 
                 EmployeeId = VALUES(EmployeeId),
@@ -584,7 +584,7 @@ def add_to_PerformanceEvaluationMKT(file_path):
                 ExitRate = VALUES(ExitRate),
                 LinkCount = VALUES(LinkCount)
         """, (
-            row["EvaluationMKTId"],
+            row["PerformanceEvaluationMKTId"],
             row["EmployeeId"],
             row["Date"],
             row["WorkPerformanceScore"],
@@ -661,7 +661,7 @@ def add_to_Products(file_path):
 
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO Products (
+    INSERT INTO Product (
         ProductId, ProductName, Description, UnitPrice, Remaining
     ) VALUES (%s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
@@ -699,7 +699,7 @@ def add_to_Order(file_path):
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
     INSERT INTO Orders (
-        OrderId, CustomerId, OrderDate, ProductId, TotalAmount
+        OrdersId, CustomerId, OrderDate, ProductId, TotalAmount
     ) VALUES (%s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         CustomerId = VALUES(CustomerId),
@@ -711,7 +711,7 @@ def add_to_Order(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['OrderId'], row['CustomerId'], row['OrderDate'],
+            row['OrdersId'], row['CustomerId'], row['OrderDate'],
             row['ProductId'], row['TotalAmount']
         ))
 
@@ -732,7 +732,7 @@ def add_to_Payments(file_path):
     data = pd.read_excel(file_path)
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO Payments (
+    INSERT INTO Payment (
         PaymentId, OrderId, PaymentDate, Amount
     ) VALUES (%s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
@@ -766,8 +766,8 @@ def add_to_KPISales(file_path):
     data = pd.read_excel(file_path)
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO KPISales (
-        KPIId, Employee, Date, WorkPerformanceScore, ConsciousnessScore, 
+    INSERT INTO KPISale (
+        KPISaleID, Employee, Date, WorkPerformanceScore, ConsciousnessScore, 
         CustomerCount, TotalRevenue, DealClosureRate
     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
@@ -783,7 +783,7 @@ def add_to_KPISales(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['KPIId'], row['Employee'], row['Date'], 
+            row['KPISaleID'], row['Employee'], row['Date'], 
             row['WorkPerformanceScore'], row['ConsciousnessScore'], 
             row['CustomerCount'], row['TotalRevenue'], 
             row['DealClosureRate']
@@ -809,8 +809,8 @@ def add_to_PerformanceEvaluationSales(file_path):
     
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO EmployeePerformanceSales (
-        EmployeePerformanceSalesID, Employee, Date, WorkPerformanceScore, ConsciousnessScore, CustomerCount, TotalRevenue, DealClosureRate
+    INSERT INTO PerformanceEvaluationSale (
+        PerformanceEvaluationSaleId, Employee, Date, WorkPerformanceScore, ConsciousnessScore, CustomerCount, TotalRevenue, DealClosureRate
     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         Employee = VALUES(Employee),
@@ -825,7 +825,7 @@ def add_to_PerformanceEvaluationSales(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['EmployeePerformanceSalesID'], row['Employee'], row['Date'], 
+            row['PerformanceEvaluationSaleId'], row['Employee'], row['Date'], 
             row['WorkPerformanceScore'], row['ConsciousnessScore'], row['CustomerCount'], 
             row['TotalRevenue'], row['DealClosureRate']
         ))
@@ -851,8 +851,8 @@ def add_to_ExpenseReports(file_path):
     
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO ExpenseReports (
-        ReportId, ReportDate, TotalAmount, EmployeeID, ReasonId, Status, AcceptDate
+    INSERT INTO ExpenseReport (
+        ExpenseReportId, ReportDate, TotalAmount, EmployeeID, ReasonId, Status, AcceptDate
     ) VALUES (%s, %s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         ReportDate = VALUES(ReportDate),
@@ -866,7 +866,7 @@ def add_to_ExpenseReports(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['ReportId'], row['ReportDate'], row['TotalAmount'], 
+            row['ExpenseReportId'], row['ReportDate'], row['TotalAmount'], 
             row['EmployeeID'], row['ReasonId'], row['Status'], 
             row['AcceptDate']
         ))
@@ -929,13 +929,13 @@ def add_to_KPIAccounting(file_path):
     
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO PerformanceEvaluationAccounting (
-        EmployeeId, Month, WorkPerformanceScore, ConsciousnessScore, AveragePaymentTime,
+    INSERT INTO KPIAccounting (
+        EmployeeId, Date, WorkPerformanceScore, ConsciousnessScore, AveragePaymentTime,
         AverageDebtRecoveryTime, CostPerTransaction, AverageProcessingTime, PaymentErrorRate,
         CostToRevenueRatio
     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
-        Month = VALUES(Month),
+        Date = VALUES(Date),
         WorkPerformanceScore = VALUES(WorkPerformanceScore),
         ConsciousnessScore = VALUES(ConsciousnessScore),
         AveragePaymentTime = VALUES(AveragePaymentTime),
@@ -949,7 +949,7 @@ def add_to_KPIAccounting(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['EmployeeId'], row['Month'], row['WorkPerformanceScore'], 
+            row['EmployeeId'], row['Date'], row['WorkPerformanceScore'], 
             row['ConsciousnessScore'], row['AveragePaymentTime'], 
             row['AverageDebtRecoveryTime'], row['CostPerTransaction'], 
             row['AverageProcessingTime'], row['PaymentErrorRate'], 
@@ -976,8 +976,8 @@ def add_to_Payables(file_path):
     
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO Payables (
-        PayablesId, Date, CustomerId, Amount, DueDate
+    INSERT INTO Payable (
+        PayableId, Date, CustomerId, Amount, DueDate
     ) VALUES (%s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         Date = VALUES(Date),
@@ -989,7 +989,7 @@ def add_to_Payables(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['PayablesId'], row['Date'], row['CustomerId'], 
+            row['PayableId'], row['Date'], row['CustomerId'], 
             row['Amount'], row['DueDate']
         ))
 
@@ -1015,13 +1015,13 @@ def add_to_PerformanceEvaluationAccounting(file_path):
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
     INSERT INTO PerformanceEvaluationAccounting (
-        EmployeeId, Month, WorkPerformanceScore, ConsciousnessScore, 
+        EmployeeId, Date, WorkPerformanceScore, ConsciousnessScore, 
         AveragePaymentTime, AverageDebtRecoveryTime, CostPerTransaction, 
         AverageProcessingTime, PaymentErrorRate, CostToRevenueRatio
     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         EmployeeId = VALUES(EmployeeId),
-        Month = VALUES(Month),
+        Date = VALUES(Date),
         WorkPerformanceScore = VALUES(WorkPerformanceScore),
         ConsciousnessScore = VALUES(ConsciousnessScore),
         AveragePaymentTime = VALUES(AveragePaymentTime),
@@ -1035,7 +1035,7 @@ def add_to_PerformanceEvaluationAccounting(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['EmployeeId'], row['Month'], row['WorkPerformanceScore'], 
+            row['EmployeeId'], row['Date'], row['WorkPerformanceScore'], 
             row['ConsciousnessScore'], row['AveragePaymentTime'], 
             row['AverageDebtRecoveryTime'], row['CostPerTransaction'],
             row['AverageProcessingTime'], row['PaymentErrorRate'],
@@ -1127,8 +1127,8 @@ def add_to_Receivables(file_path):
     
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO Receivables (
-        ReceivablesId, Date, CustomerId, Amount, DueDate
+    INSERT INTO Receivable (
+        ReceivableId, Date, CustomerId, Amount, DueDate
     ) VALUES (%s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         Date = VALUES(Date),
@@ -1140,7 +1140,7 @@ def add_to_Receivables(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['ReceivablesId'], row['Date'], row['CustomerId'],
+            row['ReceivableId'], row['Date'], row['CustomerId'],
             row['Amount'], row['DueDate']
         ))
 
@@ -1164,7 +1164,7 @@ def add_to_Taxes(file_path):
     
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO Taxes (
+    INSERT INTO Tax (
         TaxId, Date, BusinessTax, IncomeTax, ValueAddedTax, PersonalIncomeTax
     ) VALUES (%s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
@@ -1203,7 +1203,7 @@ def add_to_TaxTypeDescription(file_path):
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
     INSERT INTO TaxTypeDescription (
-        TaxTypeID, Description, FixedTax, RateFixedTax
+        TaxTypeDescriptionId, Description, FixedTax, RateFixedTax
     ) VALUES (%s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         Description = VALUES(Description),
@@ -1214,7 +1214,7 @@ def add_to_TaxTypeDescription(file_path):
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
-            row['TaxTypeID'], row['Description'], row['FixedTax'], row['RateFixedTax']
+            row['TaxTypeDescriptionId'], row['Description'], row['FixedTax'], row['RateFixedTax']
         ))
 
     # Commit transaction và đóng kết nối
@@ -1223,7 +1223,7 @@ def add_to_TaxTypeDescription(file_path):
     db.close()
 
 
-def add_to_Campaign(file_path):
+def add_to_Campaigns(file_path):
     db = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -1237,7 +1237,7 @@ def add_to_Campaign(file_path):
 
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO Campaigns (
+    INSERT INTO Campaign (
         CampaignId, Marketer, Name, Brand, Target, StartDate, EndDate, 
         Description, Impression, Reach, Click, Share, Cmt, Inbox, Budget
     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -1286,7 +1286,7 @@ def add_to_Assets(file_path):
     
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
-    INSERT INTO Assets (
+    INSERT INTO Asset (
         AssetId, ProductName, Quantity, UnitPrice
     ) VALUES (%s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
@@ -1319,11 +1319,11 @@ def insert_data_from_excel(file_path, department, table):
             'InterView': add_to_InterView,
             'JobPosition': add_to_JobPosition,
             'KPIHR': add_to_KPIHR,
-            'PerformanceEvaluation': add_to_PerformanceEvaluationHR,
+            'PerformanceEvaluationHR': add_to_PerformanceEvaluationHR,
             'RecruitmentChannel': add_to_RecruitmentChannel
         },
         'MKT': {
-            'Campaign': add_to_Campaign,
+            'Campaign': add_to_Campaigns,
             'KPIMKT': add_to_KPIMKT,
             'SEO': add_to_SEO,
             'Leads': add_to_Leads,
@@ -1331,23 +1331,23 @@ def insert_data_from_excel(file_path, department, table):
             'PerformanceEvaluationMKT': add_to_PerformanceEvaluationMKT
         },
         'SALES': {
-            'PerformanceEvaluationSales': add_to_PerformanceEvaluationSales,
-            'KPISales': add_to_KPISales,
-            'Order': add_to_Order,
-            'Products': add_to_Products,
-            'Payments': add_to_Payments
+            'PerformanceEvaluationSale': add_to_PerformanceEvaluationSales,
+            'KPISale': add_to_KPISales,
+            'Orders': add_to_Order,
+            'Product': add_to_Products,
+            'Payment': add_to_Payments
         },
         'Accounting': {
-            'Assets': add_to_Assets,
-            'ExpenseReports': add_to_ExpenseReports,
+            'Asset': add_to_Assets,
+            'ExpenseReport': add_to_ExpenseReports,
             'Fund': add_to_Fund,
             'KPIAccounting': add_to_KPIAccounting,
-            'Payables': add_to_Payables,
+            'Payable': add_to_Payables,
             'PerformanceEvaluationAccounting': add_to_PerformanceEvaluationAccounting,
             'PersonalIncomeTax': add_to_PersonalIncomeTax,
             'Reason': add_to_Reason,
-            'Receivables': add_to_Receivables,
-            'Taxes': add_to_Taxes,
+            'Receivable': add_to_Receivables,
+            'Tax': add_to_Taxes,
             'TaxTypeDescription': add_to_TaxTypeDescription
         }
     }

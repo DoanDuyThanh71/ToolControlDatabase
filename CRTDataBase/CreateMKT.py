@@ -12,7 +12,7 @@ cursor.execute("ALTER DATABASE DBCPN CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 
 
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS Campaigns (
+CREATE TABLE IF NOT EXISTS Campaign (
     CampaignId INT UNSIGNED PRIMARY KEY,
     Marketer INT UNSIGNED NOT NULL,
     Name NVARCHAR(63) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS Campaigns (
 
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Leads (
-    LeadId INT UNSIGNED PRIMARY KEY,
+    LeadsId INT UNSIGNED PRIMARY KEY,
     Name NVARCHAR(255) NOT NULL,
     Address NVARCHAR(255) NOT NULL,
     Phone NVARCHAR(15)  NOT NULL,
@@ -46,12 +46,12 @@ CREATE TABLE IF NOT EXISTS Leads (
     CampaignId INT UNSIGNED NOT NULL,
     Status NVARCHAR(255)  NOT NULL,
     Score INT UNSIGNED NOT NULL,
-    FOREIGN KEY (CampaignId) REFERENCES Campaigns(CampaignId) ON Delete CASCADE On UPDATE CASCADE 
+    FOREIGN KEY (CampaignId) REFERENCES Campaign(CampaignId) ON Delete CASCADE On UPDATE CASCADE 
 )
 ''')
 
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS PageViews (
+CREATE TABLE IF NOT EXISTS PageView (
     PageViewId INT UNSIGNED PRIMARY KEY,
     Date DATE NOT NULL,
     Page NVARCHAR(255) NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS SEO (
 
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS PerformanceEvaluationMKT (
-    EvaluationMKTId INT UNSIGNED PRIMARY KEY,
+    PerformanceEvaluationMKTId INT UNSIGNED PRIMARY KEY,
     EmployeeId INT UNSIGNED NOT NULL,
     Date DATE NOT NULL,
     WorkPerformanceScore INT UNSIGNED NOT NULL,

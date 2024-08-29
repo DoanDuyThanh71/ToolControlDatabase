@@ -75,8 +75,8 @@ cursor.execute("""
     CREATE TABLE IF NOT EXISTS Application (
         ApplicationId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         ApplicationDate DATE NOT NULL,
-        RecruitmentChannelId INT UNSIGNED NOT NULL,
         ApplicantId INT UNSIGNED NOT NULL,
+        RecruitmentChannelId INT UNSIGNED NOT NULL,
         JobPositionId INT UNSIGNED NOT NULL,
         PassCV ENUM('Pass', 'Fail') NOT NULL,
         FOREIGN KEY (RecruitmentChannelId) REFERENCES RecruitmentChannel(RecruitmentChannelId) ON Delete CASCADE On UPDATE CASCADE,
@@ -99,10 +99,13 @@ cursor.execute("""
     )
 """)
 
+# # Drop Table for Performance Evaluations
+# cursor.execute("DROP TABLE IF EXISTS PerformanceEvaluationHR")
+
 # Create Table for Performance Evaluations
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS PerformanceEvaluationHR (
-        PerformanceEvaluationId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+        PerformanceEvaluationHRId INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         EmployeeId INT UNSIGNED NOT NULL,
         EvaluationDate DATE NOT NULL,
         ConsciousnessScore INT NOT NULL,

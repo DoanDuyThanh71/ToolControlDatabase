@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS Reason (
 
 # Tạo bảng ExpenseReports: Báo cáo chi phí
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS ExpenseReports (
-    ReportId INT UNSIGNED PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS ExpenseReport (
+    ExpenseReportId INT UNSIGNED PRIMARY KEY,
     ReportDate DATE NOT NULL,
     TotalAmount DECIMAL(12,1)  NOT NULL,
     EmployeeID INT UNSIGNED,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS ExpenseReports (
 cursor.execute('''
 
 CREATE TABLE IF NOT EXISTS TaxTypeDescription (
-    TaxTypeID INT UNSIGNED PRIMARY KEY,
+    TaxTypeDescriptionId INT UNSIGNED PRIMARY KEY,
     Description TEXT NOT NULL,
     FixedTax DECIMAL(12,1)  NOT NULL,
     RateFixedTax INT UNSIGNED NOT NULL
@@ -61,9 +61,7 @@ CREATE TABLE IF NOT EXISTS TaxTypeDescription (
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS PersonalIncomeTax (
     PersonalIncomeTaxId INT UNSIGNED PRIMARY KEY,
-    TaxType  INT UNSIGNED NOT NULL,
-    Foreign key (PersonalIncomeTaxId) REFERENCES Employee(EmployeeId) ON Delete CASCADE On UPDATE CASCADE,
-    Foreign key (TaxType) REFERENCES TaxTypeDescription(TaxTypeID) ON Delete CASCADE On UPDATE CASCADE
+    TaxType  INT UNSIGNED NOT NULL
 )
 ''')
 
@@ -76,8 +74,8 @@ CREATE TABLE IF NOT EXISTS PersonalIncomeTax (
 
 # Tạo bảng Assets: Tài sản công ty
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS Assets (
-    AssetsId INT UNSIGNED PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Asset (
+    AssetId INT UNSIGNED PRIMARY KEY,
     ProductName VARCHAR(255) NOT NULL,
     Quantity INT UNSIGNED NOT NULL,
     UnitPrice DECIMAL(12,1)  NOT NULL
@@ -97,13 +95,13 @@ CREATE TABLE IF NOT EXISTS Fund (
 
 # Tạo bảng Receivables: Ghi chép công nợ phải thu
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS Receivables (
-    ReceivablesId INT UNSIGNED PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Receivable (
+    ReceivableId INT UNSIGNED PRIMARY KEY,
     Date DATE NOT NULL,
     CustomerId INT UNSIGNED NOT NULL,
     Amount DECIMAL(12,1)  NOT NULL,
     DueDate DATE NOT NULL,
-    Foreign key (CustomerId) REFERENCES Leads(LeadId) ON Delete CASCADE On UPDATE CASCADE
+    Foreign key (CustomerId) REFERENCES Leads(LeadsId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
 
@@ -112,19 +110,19 @@ CREATE TABLE IF NOT EXISTS Receivables (
 
 # Tạo bảng Payables: Ghi chép công nợ phải trả
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS Payables (
-    PayablesId INT UNSIGNED PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Payable (
+    PayableId INT UNSIGNED PRIMARY KEY,
     Date DATE NOT NULL,
     CustomerId INT UNSIGNED NOT NULL,
     Amount DECIMAL(12,1)  NOT NULL,
     DueDate DATE NOT NULL,
-    Foreign key (CustomerId) REFERENCES Leads(LeadId) ON Delete CASCADE On UPDATE CASCADE
+    Foreign key (CustomerId) REFERENCES Leads(LeadsId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
 
 # Tạo bảng Taxes: Thuế
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS Taxes (
+CREATE TABLE IF NOT EXISTS Tax (
     TaxId INT UNSIGNED PRIMARY KEY,
     Date DATE NOT NULL,
     BusinessTax DECIMAL(12,1)  NOT NULL,

@@ -1,6 +1,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from UI_AddingData import UI_Add
 from UI_UpdateData import UI_Update
+from UI_DeleteData import UI_DeleteData
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
@@ -23,14 +24,14 @@ class UI_Home(object):
             0, QtWidgets.QApplication.instance().activeWindow().close
         )
 
-    # def openIFPD(self):
-    #     self.window = QtWidgets.QMainWindow()
-    #     self.ui = UI_IFPD()
-    #     self.ui.setupUi(self.window)
-    #     self.window.show()
-    #     QtCore.QTimer.singleShot(
-    #         0, QtWidgets.QApplication.instance().activeWindow().close
-    #     )
+    def OpenDeleteData(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = UI_DeleteData()
+        self.ui.setupUi(self.window)
+        self.window.show()
+        QtCore.QTimer.singleShot(
+            0, QtWidgets.QApplication.instance().activeWindow().close
+        )
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -85,7 +86,7 @@ class UI_Home(object):
         font.setWeight(75)
         self.deleteData.setFont(font)
         self.deleteData.setObjectName("deleteData")
-        # self.deleteData.clicked.connect(self.openIFPD)
+        self.deleteData.clicked.connect(self.OpenDeleteData)
         self.deleteData.installEventFilter(self.addData)
 
         MainWindow.setCentralWidget(self.centralwidget)
