@@ -216,7 +216,7 @@ def add_to_ErrorCode(file_path):
     db.close()
                 
                 
-def add_to_InterView(file_path):
+def add_to_Interview(file_path):
     # Kết nối tới cơ sở dữ liệu
     db = mysql.connector.connect(host="localhost", user="root", password="Thanhdua12@")
     cursor = db.cursor()
@@ -1316,7 +1316,7 @@ def insert_data_from_excel(file_path, department, table):
             'Employee': add_to_Employee,
             'EmployeeError': add_to_EmployeeError,
             'ErrorCode': add_to_ErrorCode,
-            'InterView': add_to_InterView,
+            'Interview': add_to_Interview,
             'JobPosition': add_to_JobPosition,
             'KPIHR': add_to_KPIHR,
             'PerformanceEvaluationHR': add_to_PerformanceEvaluationHR,

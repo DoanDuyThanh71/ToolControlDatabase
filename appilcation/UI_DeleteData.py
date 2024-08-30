@@ -8,6 +8,8 @@ import os
 import openpyxl as xlsx
 import sys
 
+from UI_DialogNotification import NotificationDialog
+
 class Worker(QtCore.QThread):
     
     finished = QtCore.pyqtSignal()
@@ -86,6 +88,8 @@ class UI_DeleteData(object):
 
             if result == ErrorDialog.DialogCode.Accepted:
                 self.delete_data()  
+                ntf = NotificationDialog("")
+                ntf.show_ntf("Data Deleted successfully.")
             else:
                 print("Deletion canceled.")
             return
@@ -94,40 +98,13 @@ class UI_DeleteData(object):
             result = cf_dialog.show_error("Are you sure you want to delete this data?")
             if result == ErrorDialog.DialogCode.Accepted:
                 self.delete_data() 
+                ntf = NotificationDialog("")
+                ntf.show_ntf("Data Deleted successfully.")
             else:
                 print("Deletion canceled.")
             return
                 
-              
-        
-        
-        
-        # Check if data contains null values
-        if any(None in row for row in self.data):
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("Data contains null values. Please ensure all cells are filled.")
-            return
-        
-        
-        # Check for duplicates in the data
-        for row_idx, row_data in enumerate(self.data[1:]):
-            if self.data[1:].count(row_data) > 1:
-                error_dialog = ErrorDialog("")
-                error_dialog.show_error("Duplicate values found in the data. Please ensure all values are unique.")
-                return
-        
-        # Check for duplicates in the first column
-        first_column_values = [row[0] for row in self.data[1:]]
-        if len(first_column_values) != len(set(first_column_values)):
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("Duplicate values found in the ID. Please ensure all values are unique.")
-            return
-        
-        self.worker = Worker(self.path, self.Department.currentText(), self.Table.currentText())
-        self.progress_dialog = ProgressDialog()
-        self.progress_dialog.show()
-        self.worker.finished.connect(self.on_process_finished)
-        self.worker.start()
+ 
 
 
     def on_process_finished(self):
@@ -352,7 +329,6 @@ class UI_DeleteData(object):
                     # Đóng kết nối
                     db.close()
 
-                    print(f"Deleted IDs: {id_list}")
 
                 except Exception as e:
                     print(f"Error: {e}")

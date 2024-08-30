@@ -8,6 +8,7 @@ import openpyxl as xlsx
 import sys
 
 from UI_DialogCf import CfDialog
+from UI_DialogNotification import NotificationDialog
 
 class Worker(QtCore.QThread):
     
@@ -86,7 +87,7 @@ class UI_Update(object):
             result = cf_dialog.show_error("Are you sure you want to Update this data?")
 
             if result == ErrorDialog.DialogCode.Accepted:
-                self.update_data()  # Thực hiện lệnh delete
+                self.update_data()  
             else:
                 print("Deletion canceled.")
             return
@@ -113,11 +114,13 @@ class UI_Update(object):
             error_dialog.show_error("Duplicate values found in the ID. Please ensure all values are unique.")
             return
         
-        self.worker = Worker(self.path, self.Department.currentText(), self.Table.currentText())
-        self.progress_dialog = ProgressDialog()
-        self.progress_dialog.show()
-        self.worker.finished.connect(self.on_process_finished)
-        self.worker.start()
+        cf_dialog = CfDialog("Are you sure you want to delete this data?")
+        result = cf_dialog.show_error("Are you sure you want to delete this data?")
+        if result == ErrorDialog.DialogCode.Accepted:
+            insert_data_from_excel(self.path, self.Department.currentText(), self.Table.currentText())
+            ntf = NotificationDialog("")
+            ntf.show_ntf("Data added successfully.")
+        
         
 
 
@@ -339,7 +342,9 @@ class UI_Update(object):
             
             db.commit()
             db.close()
-            print("Data updated successfully.")
+            
+            ntf = NotificationDialog("")
+            ntf.show_ntf("Data added successfully.")
         
         except Exception as e:
             print(f"Error: {e}")

@@ -1,7 +1,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from UI_Dialog import ErrorDialog
-from UI_ProgressDialog import ProgressDialog
 from UI_DialogCf import CfDialog
+from UI_DialogNotification import NotificationDialog
 from AddData import insert_data_from_excel
 import os
 import openpyxl as xlsx
@@ -19,7 +19,8 @@ class Worker(QtCore.QThread):
     def run(self):
         shell = False
         insert_data_from_excel(self.path, self.Department, self.Table)
-        self.finished.emit()
+            
+
 
 
 
@@ -89,63 +90,66 @@ class UI_Add(object):
         db_ids = set(row[0] for row in cursor.fetchall())
         
         if len(db_ids) == 0:
-            return True
+            return False
         
         # So sánh với các giá trị trong file Excel
         for index, row in data.iterrows():
             value = row[column_name]
-            if value not in db_ids:
-                return False  # Nếu có giá trị không tồn tại trong cơ sở dữ liệu
+            if value in db_ids:
+                return True  # Nếu có giá trị không tồn tại trong cơ sở dữ liệu
 
-        return True  # Nếu tất cả giá trị đều tồn tại
+        return False  # Nếu tất cả giá trị đều tồn tại
 
         
     def run_app(self):
-        if not self.path:
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("No file selected. Please import a xlsx file.")
-            return
-        
-        # Check if data contains null values
-        if any(None in row for row in self.data):
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("Data contains null values. Please ensure all cells are filled.")
-            return
-        
-        
-        # Check for duplicates in the first column
-        first_column_values = [row[0] for row in self.data[1:]]
-        if len(first_column_values) != len(set(first_column_values)):
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("Duplicate values found in the first column. Please ensure all values are unique.")
-            return
-        
-        table_name = self.Table.currentText()
-        column_name = table_name  + 'Id'
-        
-        if not self.check_data_exist(self.path,  table_name, column_name):
-            error_dialog = ErrorDialog("")
-            error_dialog.show_error("Data already exists in the database. Please ensure all values are unique.")
-            return
-        
-        if self.path:
-            cf_dialog = CfDialog("Are you sure you want to add this data?")
-            result = cf_dialog.show_error("Are you sure you want to add this data?")
+        try:
+            if not self.path:
+                error_dialog = ErrorDialog("")
+                error_dialog.show_error("No file selected. Please import a xlsx file.")
+                return
+            
+            # Check if data contains null values
+            if any(None in row for row in self.data):
+                error_dialog = ErrorDialog("")
+                error_dialog.show_error("Data contains null values. Please ensure all cells are filled.")
+                return
+            
+            
+            # Check for duplicates in the first column
+            first_column_values = [row[0] for row in self.data[1:]]
+            if len(first_column_values) != len(set(first_column_values)):
+                error_dialog = ErrorDialog("")
+                error_dialog.show_error("Duplicate values found in the first column. Please ensure all values are unique.")
+                return
+            
+            table_name = self.Table.currentText()
+            column_name = table_name  + 'Id'
+            
+            if  self.check_data_exist(self.path,  table_name, column_name):
+                error_dialog = ErrorDialog("")
+                error_dialog.show_error("Data already exists in the database. Please ensure all values are unique.")
+                return
+            
+            if self.path:
+                cf_dialog = CfDialog("Are you sure you want to add this data?")
+                result = cf_dialog.show_error("Are you sure you want to add this data?")
 
-            if result == ErrorDialog.DialogCode.Accepted:
-                self.worker = Worker(self.path, self.Department.currentText(), self.Table.currentText())
-                self.progress_dialog = ProgressDialog()
-                self.progress_dialog.show()
-                self.worker.finished.connect(self.on_process_finished)
-                self.worker.start()
-            else:
-                print("Add canceled.")
+                if result == ErrorDialog.DialogCode.Accepted:
+                    path = self.path
+                    insert_data_from_excel(path, self.Department.currentText(), self.Table.currentText())
+                    ntf = NotificationDialog("")
+                    ntf.show_ntf("Data added successfully.")
+                    
+                else:
+                    print("Add canceled.")
+                return
+        except Exception as e:
+            error_dialog = ErrorDialog("Wrong data format, please check again")
+            error_dialog.show_error("Wrong data format, please check again")
             return
-        
-        
-    
-    def on_process_finished(self):
-        self.progress_dialog.close()
+            
+            
+
 
 
     def go_back(self):
@@ -194,7 +198,7 @@ class UI_Add(object):
         self.btnBack.clicked.connect(self.go_back)
         # Button to process
         self.btnProcess = QtWidgets.QPushButton(
-            parent=self.centralwidget, clicked=lambda: self.run_app()
+                parent=self.centralwidget, clicked=lambda: self.run_app()
         )
         self.btnProcess.setGeometry(QtCore.QRect(950, 40, 301, 23))
         font = QtGui.QFont()
@@ -306,7 +310,7 @@ class UI_Add(object):
         self.Table.addItem("Employee")
         self.Table.addItem("EmployeeError")
         self.Table.addItem("ErrorCode")
-        self.Table.addItem("InterView")
+        self.Table.addItem("Interview")
         self.Table.addItem("JobPosition")
         self.Table.addItem("KPIHR")
         self.Table.addItem("PerformanceEvaluationHR")
