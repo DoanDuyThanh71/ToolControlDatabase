@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS Receivable (
     CustomerId INT UNSIGNED NOT NULL,
     Amount DECIMAL(12,1)  NOT NULL,
     DueDate DATE NOT NULL,
+    Status ENUM('Collected', 'Not Collected') NOT NULL DEFAULT 'Not Collected';
     Foreign key (CustomerId) REFERENCES Leads(LeadsId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')
@@ -116,6 +117,7 @@ CREATE TABLE IF NOT EXISTS Payable (
     CustomerId INT UNSIGNED NOT NULL,
     Amount DECIMAL(12,1)  NOT NULL,
     DueDate DATE NOT NULL,
+    Status ENUM('Paid', 'Unpaid') NOT NULL DEFAULT 'Unpaid',
     Foreign key (CustomerId) REFERENCES Leads(LeadsId) ON Delete CASCADE On UPDATE CASCADE
 )
 ''')

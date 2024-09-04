@@ -976,20 +976,21 @@ def add_to_Payables(file_path):
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
     INSERT INTO Payable (
-        PayableId, Date, CustomerId, Amount, DueDate
-    ) VALUES (%s, %s, %s, %s, %s)
+        PayableId, Date, CustomerId, Amount, DueDate, Status
+    ) VALUES (%s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         Date = VALUES(Date),
         CustomerId = VALUES(CustomerId),
         Amount = VALUES(Amount),
-        DueDate = VALUES(DueDate)
+        DueDate = VALUES(DueDate),
+        Status = VALUES(Status)
     """
     
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
             row['PayableId'], row['Date'], row['CustomerId'], 
-            row['Amount'], row['DueDate']
+            row['Amount'], row['DueDate'], row['Status']
         ))
 
     # Commit transaction và đóng kết nối
@@ -1127,20 +1128,21 @@ def add_to_Receivables(file_path):
     # Chuẩn bị câu lệnh SQL để chèn dữ liệu
     sql = """
     INSERT INTO Receivable (
-        ReceivableId, Date, CustomerId, Amount, DueDate
-    ) VALUES (%s, %s, %s, %s, %s)
+        ReceivableId, Date, CustomerId, Amount, DueDate, Status
+    ) VALUES (%s, %s, %s, %s, %s, %s)
     ON DUPLICATE KEY UPDATE
         Date = VALUES(Date),
         CustomerId = VALUES(CustomerId),
         Amount = VALUES(Amount),
-        DueDate = VALUES(DueDate)
+        DueDate = VALUES(DueDate),
+        Status = VALUES(Status)
     """
     
     # Chèn dữ liệu vào cơ sở dữ liệu
     for index, row in data.iterrows():
         cursor.execute(sql, (
             row['ReceivableId'], row['Date'], row['CustomerId'],
-            row['Amount'], row['DueDate']
+            row['Amount'], row['DueDate'], row['Status']
         ))
 
     # Commit transaction và đóng kết nối
