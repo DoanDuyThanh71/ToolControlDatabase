@@ -2,6 +2,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from UI_AddingData import UI_Add
 from UI_UpdateData import UI_Update
 from UI_DeleteData import UI_DeleteData
+from UI_CleanData import UI_clean
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
@@ -32,12 +33,21 @@ class UI_Home(object):
         QtCore.QTimer.singleShot(
             0, QtWidgets.QApplication.instance().activeWindow().close
         )
+        
+    def OpenCleanData(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = UI_clean()
+        self.ui.setupUi(self.window)
+        self.window.show()
+        QtCore.QTimer.singleShot(
+            0, QtWidgets.QApplication.instance().activeWindow().close
+        )
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(800, 477)
-        MainWindow.setFixedSize(800, 477)
+        MainWindow.resize(800, 577)
+        MainWindow.setFixedSize(800, 577)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -89,6 +99,19 @@ class UI_Home(object):
         self.deleteData.clicked.connect(self.OpenDeleteData)
         self.deleteData.installEventFilter(self.addData)
 
+        self.checkData = QtWidgets.QPushButton(self.centralwidget)
+        self.checkData.setGeometry(QtCore.QRect(90, 430, 630, 41))
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.checkData.setFont(font)
+        self.checkData.setObjectName("checkData")
+        self.checkData.clicked.connect(self.OpenCleanData)
+        self.checkData.installEventFilter(self.addData)
+        
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -143,6 +166,13 @@ class UI_Home(object):
             _translate(
                 "MainWindow",
                 "Delete data from database",
+            )
+        )
+        
+        self.checkData.setText(
+            _translate(
+                "MainWindow",
+                "Clean data",
             )
         )
 

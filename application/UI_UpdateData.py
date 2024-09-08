@@ -40,6 +40,8 @@ class UI_Update(object):
         }
 
     def importData(self):
+        self.labInfor.clear()
+        
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             None, "Import Data", "", "xlsx Files (*.xlsx)"
         )
@@ -312,6 +314,7 @@ class UI_Update(object):
             
             
             # Lấy dữ liệu đã chỉnh sửa từ QTableWidget
+            
             rows = self.tabAns.rowCount() 
             cols = self.tabAns.columnCount()
             columns = [self.tabAns.horizontalHeaderItem(col_idx).text() for col_idx in range(cols)]

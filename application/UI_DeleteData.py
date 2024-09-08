@@ -40,6 +40,8 @@ class UI_DeleteData(object):
         }
 
     def importData(self):
+        self.labInfor.clear()
+        
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             None, "Import Data", "", "xlsx Files (*.xlsx)"
         )
